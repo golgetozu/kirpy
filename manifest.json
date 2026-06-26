@@ -3,7 +3,7 @@
   "short_name": "Labirent",
   "description": "Eğlenceli labirent oyunu. Elmaları topla ve çık!",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait-primary",
   "scope": "/",
   "theme_color": "#1a1a2e",
