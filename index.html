@@ -8,8 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kirpi Labirent">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="image.png">
-<link rel="icon" href="image.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Kirpi Labirent</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -48,8 +47,8 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
 }
 
 /* ── HUD ── */
@@ -60,7 +59,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(var(--safe-top) + 4px) 10px 3px; /* safe-top eklendi */
+  padding: 4px 10px 3px;
   gap: 6px;
   min-height: 36px;
 }
@@ -152,8 +151,8 @@ body {
   justify-content: center;
   overflow: hidden;
   min-height: 0;
-  padding-bottom: var(--safe-bottom); /* alt safe area */
 }
+
 canvas {
   display: block;
   touch-action: none;
@@ -212,6 +211,15 @@ canvas {
   z-index: 1;
 }
 
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(0,212,255,0.3);
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .main-btn-area {
@@ -223,7 +231,7 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
+  padding: 10px 10px calc(var(--safe-bottom) + 12px);
   gap: 6px;
   background: linear-gradient(to top, rgba(0,0,0,0.85) 50%, transparent 100%);
 }
@@ -284,7 +292,7 @@ canvas {
 #lv-ov {
   background: rgba(10,10,30,0.97);
   align-items: center;
-  padding: 20px 10px 20px;
+  padding: calc(var(--safe-top) + 10px) 8px calc(var(--safe-bottom) + 10px);
   gap: 0;
 }
 
@@ -293,19 +301,19 @@ canvas {
   font-size: 13px;
   text-shadow: 2px 2px 0 #7a5010;
   letter-spacing: 2px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   flex-shrink: 0;
 }
 
 .lv-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
   overflow-y: auto;
   flex: 1;
-  padding: 4px;
+  padding: 0;
   align-content: start;
 }
 
@@ -314,18 +322,18 @@ canvas {
   aspect-ratio: 1;
   border: none;
   border-radius: 8px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: bold;
   color: white;
   cursor: pointer;
   transition: 0.15s;
   box-shadow: 0 3px 0 #1a5c1a;
+  min-height: 48px;
 }
 
 .lv-unlocked { background: #388e3c; }
 .lv-unlocked:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a5c1a; }
 .lv-locked { background: #333; opacity: 0.5; cursor: not-allowed; box-shadow: 0 3px 0 #111; }
-
 /* ── WIN POPUP ── */
 .popup-overlay {
   position: fixed;
@@ -448,6 +456,94 @@ canvas {
   border-color: #f5a623;
   text-shadow: 0 0 8px rgba(245,166,35,0.8);
 }
+
+/* ── GAME OVER POPUP ── */
+.gameover-overlay {
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0,0,0,0.8);
+  display: none; 
+  align-items: center; 
+  justify-content: center;
+  z-index: 300; 
+  backdrop-filter: blur(6px);
+}
+
+.gameover-overlay.active { display: flex; }
+
+.gameover-box {
+  background: linear-gradient(145deg,#1a0010,#3d0020);
+  border: 2px solid #ff0055; 
+  border-radius: 20px;
+  padding: 28px 24px 22px; 
+  width: min(300px,85vw);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 12px;
+  box-shadow: 0 0 50px rgba(255,0,85,0.5), 0 20px 60px rgba(0,0,0,0.7);
+  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+
+.gameover-emoji { 
+  font-size: 48px; 
+  line-height: 1; 
+  animation: shake 0.5s ease infinite alternate; 
+}
+
+@keyframes shake { 
+  from { transform:rotate(-5deg); } 
+  to { transform:rotate(5deg); } 
+}
+
+.gameover-title { 
+  color: #ff0055; 
+  font-size: 14px; 
+  text-shadow: 2px 2px 0 #800028; 
+  letter-spacing: 2px; 
+}
+
+.gameover-txt { 
+  color: rgba(255,255,255,0.7); 
+  font-size: 5px; 
+  text-align: center; 
+  line-height: 2; 
+  letter-spacing: 0.5px; 
+}
+
+.gameover-btn-row { 
+  display: flex; 
+  gap: 10px; 
+  width: 100%; 
+  margin-top: 4px; 
+}
+
+.gameover-btn { 
+  flex: 1; 
+  height: 44px; 
+  border: 2px solid; 
+  border-radius: 22px; 
+  background: transparent; 
+  font-size: 6px; 
+  font-weight: 700; 
+  letter-spacing: 1px; 
+  cursor: pointer; 
+  transition: transform 0.1s; 
+}
+
+.gameover-btn:active { transform: scale(0.95); }
+
+.gameover-btn.retry { 
+  background: linear-gradient(135deg,#ff0055,#cc0040); 
+  border-color: #ff0055; 
+  color: #fff; 
+  box-shadow: 0 0 16px rgba(255,0,85,0.5); 
+}
+
+.gameover-btn.menu { 
+  color: #00d4ff; 
+  border-color: #00d4ff; 
+}
 </style>
 </head>
 <body>
@@ -504,6 +600,22 @@ canvas {
   </div>
 </div>
 
+<!-- GAME OVER POPUP -->
+<div class="gameover-overlay" id="gameoverPopup">
+  <div class="gameover-box">
+    <div class="gameover-emoji">💀</div>
+    <div class="gameover-title">SÜRE BİTTİ!</div>
+    <div class="gameover-txt">
+      BÖLÜM <span id="goLv">1</span><br>
+      PUAN: <span id="goSc">0</span>
+    </div>
+    <div class="gameover-btn-row">
+      <button class="gameover-btn menu" id="goMenu">🏠 MENÜ</button>
+      <button class="gameover-btn retry" id="goRetry">🔄 TEKRAR</button>
+    </div>
+  </div>
+</div>
+
 <!-- ANA EKRAN -->
 <div id="ov" class="overlay active">
   <img src="image.png" id="bgImage" alt="">
@@ -519,9 +631,9 @@ canvas {
 <div id="lv-ov" class="overlay">
   <div class="lv-title">BÖLÜM SEÇ</div>
   <div class="lv-grid" id="lv-container"></div>
-  <div style="flex-shrink:0;padding-top:12px;">
-    <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
-  </div>
+  <div style="flex-shrink:0;padding-top:8px;padding-bottom:8px;">
+  <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
+</div>
 </div>
 
 <script>
@@ -540,7 +652,7 @@ canvas {
 
 /* ── PREVENT SCROLL ── */
 document.addEventListener('touchmove', function(e){
-  if(!e.target.closest('.overlay') && !e.target.closest('.popup-overlay')) e.preventDefault();
+  if(!e.target.closest('.overlay') && !e.target.closest('.popup-overlay') && !e.target.closest('.gameover-overlay')) e.preventDefault();
 },{ passive: false });
 document.addEventListener('gesturestart', function(e){ e.preventDefault(); },{ passive: false });
 
@@ -552,6 +664,7 @@ var ctx = cv.getContext('2d');
 var ov  = document.getElementById('ov');
 var lvOv= document.getElementById('lv-ov');
 var winPopup = document.getElementById('winPopup');
+var gameoverPopup = document.getElementById('gameoverPopup');
 
 var C = 11, R = 17;
 var SZ = 34;
@@ -599,12 +712,14 @@ function vib(type){
     else if(type==='tp') navigator.vibrate([30,20,30]);
     else if(type==='door') navigator.vibrate([80,40,80]);
     else if(type==='win') navigator.vibrate([150,80,150]);
+    else if(type==='gameover') navigator.vibrate([300,100,300,100,300]);
   }
   if(type==='move') beep(200,0.02);
   else if(type==='apple'){ beep(600,0.05); setTimeout(function(){ beep(800,0.08); },60); }
   else if(type==='tp'){ beep(400,0.1); setTimeout(function(){ beep(700,0.1); },100); }
   else if(type==='door'){ beep(800,0.12); setTimeout(function(){ beep(1000,0.12); },130); }
   else if(type==='win'){ beep(500,0.08); setTimeout(function(){ beep(700,0.08); },90); setTimeout(function(){ beep(900,0.15); },180); }
+  else if(type==='gameover'){ beep(300,0.2,0.15); setTimeout(function(){ beep(200,0.3,0.15); },200); }
 }
 
 /* ── RESIZE ── */
@@ -703,8 +818,8 @@ function startTimer(){
     if(timerLeft<=0){
       clearInterval(timerInterval);
       timerRunning=false;
-      // time's up - restart level
-      setTimeout(function(){ init(); startTimer(); },500);
+      blocked = true;
+      setTimeout(showGameOver, 800);
     }
   },100);
 }
@@ -841,15 +956,6 @@ function move(dx,dy){
       if(exitPos) spawnParticles(exitPos[0],exitPos[1],'#ffd700');
     }
   }
-
-  if(cell===E){
-    stopTimer();
-    sc += 200 + Math.floor(timerLeft)*10;
-    lv++;
-    if(lv>maxLv){ maxLv=lv; localStorage.setItem('kirpiMaxLv',maxLv); }
-    vib('win');
-    setTimeout(showWin,300);
-  }
 }
 
 function spawnParticles(x,y,color){
@@ -881,12 +987,31 @@ document.getElementById('popupLevels').onclick = function(){
   openLevels2();
 };
 
+/* ── GAME OVER ── */
+function showGameOver(){
+  document.getElementById('goLv').textContent = lv;
+  document.getElementById('goSc').textContent = sc;
+  gameoverPopup.classList.add('active');
+  vib('gameover');
+}
+
+document.getElementById('goRetry').onclick = function(){
+  gameoverPopup.classList.remove('active');
+  go();
+};
+
+document.getElementById('goMenu').onclick = function(){
+  gameoverPopup.classList.remove('active');
+  ov.classList.add('active');
+};
+
 /* ── GO ── */
 function go(){
   initAudio();
   ov.classList.remove('active');
   lvOv.classList.remove('active');
   winPopup.classList.remove('active');
+  gameoverPopup.classList.remove('active');
   rsz();
   init();
   startTimer();
@@ -1022,12 +1147,12 @@ document.addEventListener('keydown',function(e){
 
 var sx=0,sy=0;
 document.addEventListener('touchstart',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
   sx=e.touches[0].clientX; sy=e.touches[0].clientY;
 },{ passive:true });
 
 document.addEventListener('touchend',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
   var dx=e.changedTouches[0].clientX-sx;
   var dy=e.changedTouches[0].clientY-sy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<18) return;
@@ -1037,12 +1162,12 @@ document.addEventListener('touchend',function(e){
 
 var msx=0,msy=0,md=false;
 document.addEventListener('mousedown',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
   md=true; msx=e.clientX; msy=e.clientY;
 });
 document.addEventListener('mouseup',function(e){
   if(!md) return;
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
   md=false;
   var dx=e.clientX-msx, dy=e.clientY-msy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<10) return;
