@@ -292,7 +292,7 @@ canvas {
 #lv-ov {
   background: rgba(10,10,30,0.97);
   align-items: center;
-  padding: calc(var(--safe-top) + 10px) 8px calc(var(--safe-bottom) + 10px);
+  padding: 20px 10px 20px;
   gap: 0;
 }
 
@@ -301,19 +301,19 @@ canvas {
   font-size: 13px;
   text-shadow: 2px 2px 0 #7a5010;
   letter-spacing: 2px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   flex-shrink: 0;
 }
 
 .lv-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
   width: 100%;
-  max-width: 100%;
+  max-width: 320px;
   overflow-y: auto;
   flex: 1;
-  padding: 0;
+  padding: 4px;
   align-content: start;
 }
 
@@ -322,18 +322,18 @@ canvas {
   aspect-ratio: 1;
   border: none;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
   color: white;
   cursor: pointer;
   transition: 0.15s;
   box-shadow: 0 3px 0 #1a5c1a;
-  min-height: 48px;
 }
 
 .lv-unlocked { background: #388e3c; }
 .lv-unlocked:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a5c1a; }
 .lv-locked { background: #333; opacity: 0.5; cursor: not-allowed; box-shadow: 0 3px 0 #111; }
+
 /* ── WIN POPUP ── */
 .popup-overlay {
   position: fixed;
@@ -631,9 +631,9 @@ canvas {
 <div id="lv-ov" class="overlay">
   <div class="lv-title">BÖLÜM SEÇ</div>
   <div class="lv-grid" id="lv-container"></div>
-  <div style="flex-shrink:0;padding-top:8px;padding-bottom:8px;">
-  <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
-</div>
+  <div style="flex-shrink:0;padding-top:12px;">
+    <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
+  </div>
 </div>
 
 <script>
