@@ -1,21 +1,25 @@
-const CACHE_NAME = 'kirpi-labirent-v2';
+const CACHE_NAME = 'kirpi-labirent-v1';
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  './icon.svg',
-  './service-worker.js'
+  './image.png',
+  'data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27><rect fill=%27%231a1a2e%27 width=%27192%27 height=%27192%27/><text x=%2796%27 y=%27110%27 font-size=%27140%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27>🦔</text></svg>'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache).catch(err => {
-        console.log('Cache hatası (devam edildi):', err);
-      });
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
+      .catch(() => {})
   );
-  self.skipWaiting();
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
+      .catch(() => caches.match('./index.html'))
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -28,28 +32,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      if (response) return response;
-      return fetch(event.request).then(response => {
-        if (!response || response.status !== 200 || response.type === 'error') {
-          return response;
-        }
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseToCache);
-        });
-        return response;
-      }).catch(() => {
-        return caches.match(event.request);
-      });
     })
   );
 });
