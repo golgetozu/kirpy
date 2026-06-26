@@ -231,63 +231,43 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 10px 16px;
-  gap: 6px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.5) 80%, transparent 100%);
-  min-height: auto;
+  padding: 14px 10px 20px;
+  gap: 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.88) 60%, transparent 100%);
 }
 
 #startBtn {
-  width: 220px;
-  height: 48px;
+  width: 260px;
+  height: 56px;
   border: none;
-  border-radius: 24px;
+  border-radius: 28px;
   background: linear-gradient(135deg, #00f5ff, #0095ff, #0066ff);
   color: #fff;
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 13px;
+  letter-spacing: 3px;
   cursor: pointer;
   box-shadow: 0 0 24px rgba(0,149,255,0.8);
   text-shadow: 0 0 8px rgba(255,255,255,0.8);
-  animation: pulseGlow 1.5s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite;
   flex-shrink: 0;
-  opacity: 0.85;
-  transition: opacity 0.3s;
 }
 
-#startBtn:hover {
-  opacity: 1;
-}
+#startBtn:active { transform: scale(0.95); }
 
-#startBtn:active {
-  transform: scale(0.95);
-  opacity: 0.9;
-}
-
-@keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 15px rgba(0,149,255,0.4);
-    opacity: 0.75;
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(0,200,255,1);
-    opacity: 1;
-  }
-  100% {
-    box-shadow: 0 0 15px rgba(0,149,255,0.4);
-    opacity: 0.75;
-  }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 20px rgba(0,149,255,0.6); }
+  50% { box-shadow: 0 0 40px rgba(0,200,255,1); }
 }
 
 .btn {
-  width: 160px;
-  height: 38px;
+  width: 190px;
+  height: 44px;
   border: 2px solid;
-  border-radius: 19px;
+  border-radius: 22px;
   background: transparent;
-  font-size: 5px;
+  font-size: 6px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   cursor: pointer;
   flex-shrink: 0;
   transition: transform 0.1s;
@@ -574,6 +554,8 @@ document.addEventListener('touchmove', function(e){
 document.addEventListener('gesturestart', function(e){ e.preventDefault(); },{ passive: false });
 
 /* ── VARS ── */
+var blocked = false;
+
 var cv  = document.getElementById('c');
 var ctx = cv.getContext('2d');
 var ov  = document.getElementById('ov');
@@ -593,10 +575,16 @@ var maxLv = parseInt(localStorage.getItem('kirpiMaxLv'))||1;
 var timerMax = 60, timerLeft = 60, timerRunning = false, timerInterval = null;
 
 var PAL=[
-  {bg:'#e8f5e9',w:'#388e3c',wt:'#66bb6a',f:'#c8e6c9'},
-  {bg:'#e3f2fd',w:'#1565c0',wt:'#42a5f5',f:'#bbdefb'},
-  {bg:'#fff3e0',w:'#e65100',wt:'#ff8f00',f:'#ffe0b2'},
-  {bg:'#fce4ec',w:'#880e4f',wt:'#e91e63',f:'#f8bbd0'}
+  {bg:'#e8f5e9',w:'#388e3c',wt:'#66bb6a',f:'#c8e6c9'}, // 1. Yeşil Orman
+  {bg:'#e3f2fd',w:'#1565c0',wt:'#42a5f5',f:'#bbdefb'}, // 2. Mavi Okyanus
+  {bg:'#fff3e0',w:'#e65100',wt:'#ff8f00',f:'#ffe0b2'}, // 3. Turuncu Çöl
+  {bg:'#fce4ec',w:'#880e4f',wt:'#e91e63',f:'#f8bbd0'}, // 4. Pembe Şeker
+  {bg:'#f3e5f5',w:'#4a148c',wt:'#7b1fa2',f:'#e1bee7'}, // 5. Mor Gizemli
+  {bg:'#e0f2f1',w:'#00695c',wt:'#26a69a',f:'#b2dfdb'}, // 6. Turkuaz Tropikal
+  {bg:'#fff9c4',w:'#f57f17',wt:'#fbc02d',f:'#fff59d'}, // 7. Sarı Güneş
+  {bg:'#efebe9',w:'#4e342e',wt:'#6d4c41',f:'#d7ccc8'}, // 8. Kahve Toprak
+  {bg:'#e8eaf6',w:'#283593',wt:'#3949ab',f:'#c5cae9'}, // 9. İndigo Gece
+  {bg:'#fbe9e7',w:'#bf360c',wt:'#ff5722',f:'#ffccbc'}  // 10. Kırmızı Lav
 ];
 var pal = PAL[0];
 
@@ -782,9 +770,9 @@ function placeTeleports(){
   }
 }
 
-/* ── INIT ── */
 function init(){
-  pal = PAL[(lv-1)%4];
+  blocked = false;
+  pal = PAL[(lv-1)%PAL.length];
   grid = makeGrid();
   carveMaze(grid);
   grid[1][1]=F;
@@ -805,6 +793,7 @@ function init(){
 /* ── MOVE ── */
 function move(dx,dy){
   if(!grid) return;
+  if(blocked) return; // EKLE
   var nx=px+dx, ny=py+dy;
   if(nx<0||nx>=C||ny<0||ny>=R) return;
   var cell=grid[ny][nx];
@@ -814,22 +803,32 @@ function move(dx,dy){
   if(cell===T){
     vib('tp');
     spawnParticles(px,py,'#00d4ff');
-    
-    // Sol teleporta girdik, sağdan çık
     if(tpLeft && nx===tpLeft.x && ny===tpLeft.y && tpRight){
       px=tpRight.x; 
       py=tpRight.y;
     } 
-    // Sağ teleporta girdik, soldan çık
     else if(tpRight && nx===tpRight.x && ny===tpRight.y && tpLeft){
       px=tpLeft.x; 
       py=tpLeft.y;
     }
-    
     spawnParticles(px,py,'#00d4ff');
     return;
   }
 
+  // ÇIKIŞ KAPISI KONTROLÜ
+  if(cell===E){
+    blocked = true; // EKLE - anında kilitle
+    px=nx; py=ny;
+    stopTimer();
+    sc += 200 + Math.floor(timerLeft)*10;
+    lv++;
+    if(lv>maxLv){ maxLv=lv; localStorage.setItem('kirpiMaxLv',maxLv); }
+    vib('win');
+    setTimeout(showWin, 300);
+    return;
+  }
+
+  // NORMAL HAREKET
   px=nx; py=ny;
   vib('move');
 
