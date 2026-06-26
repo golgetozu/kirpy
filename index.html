@@ -1,22 +1,11 @@
 <!DOCTYPE html>
 <html lang="tr">
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22Kirpi Labirent%22,
-  %22short_name%22:%22Labirent%22,
-  %22description%22:%22Eğlenceli labirent oyunu. Elmaları topla ve çık!%22,
-  %22start_url%22:%22./%22,
-  %22display%22:%22fullscreen%22,
-  %22orientation%22:%22portrait-primary%22,
-  %22scope%22:%22./%22,
-  %22theme_color%22:%22%231a1a2e%22,
-  %22background_color%22:%22%231a1a2e%22,
-  %22icons%22:[
-    {%22src%22:%22image.png%22,%22sizes%22:%22any%22,%22type%22:%22image/png%22,%22purpose%22:%22any%22},
-    {%22src%22:%22image.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22,%22purpose%22:%22maskable%22}
-  ]
-}">
-
-<link rel="apple-touch-icon" href="image.png"><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Kirpi Labirent</title>
+<link rel="preload" href="image.png" as="image">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; font-family: 'Press Start 2P', cursive; }
 
@@ -125,6 +114,7 @@ canvas { display: block; touch-action: none; }
   z-index: 1;
 }
 
+/* LOADING ANİMASYONU */
 #loadingSpinner {
   position: absolute;
   top: 50%;
@@ -341,8 +331,6 @@ canvas { display: block; touch-action: none; }
   letter-spacing: 0.5px; 
   white-space: nowrap; 
 }
-
-#iconCanvas { display: none; }
 </style>
 </head>
 <body>
@@ -377,42 +365,9 @@ canvas { display: block; touch-action: none; }
   <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
 </div>
 
-<!-- Icon Canvas -->
-<canvas id="iconCanvas"></canvas>
-
 <script>
-// ========== İKON OLUŞTURMA ==========
-function createIcons() {
-  var img = new Image();
-  img.onload = function() {
-    // 192x192
-    var c192 = document.createElement('canvas');
-    c192.width = 192; c192.height = 192;
-    var ctx192 = c192.getContext('2d');
-    ctx192.fillStyle = '#1a1a2e';
-    ctx192.fillRect(0, 0, 192, 192);
-    ctx192.drawImage(img, 0, 0, 192, 192);
-    var icon192 = c192.toDataURL('image/png');
-    
-    // 512x512
-    var c512 = document.createElement('canvas');
-    c512.width = 512; c512.height = 512;
-    var ctx512 = c512.getContext('2d');
-    ctx512.fillStyle = '#1a1a2e';
-    ctx512.fillRect(0, 0, 512, 512);
-    ctx512.drawImage(img, 0, 0, 512, 512);
-    var icon512 = c512.toDataURL('image/png');
-    
-    // localStorage'a kaydet (Manifest için kullanabilmek adına)
-    localStorage.setItem('icon192', icon192);
-    localStorage.setItem('icon512', icon512);
-  };
-  img.src = 'image.png';
-}
-
+// Resimi preload et
 window.addEventListener('load', function() {
-  createIcons();
-  
   var img = new Image();
   img.onload = function() {
     document.getElementById('bgImage').classList.add('loaded');
@@ -421,7 +376,6 @@ window.addEventListener('load', function() {
   img.src = 'image.png';
 });
 
-// ========== OYUN KODU ==========
 var cv = document.getElementById('c');
 var ctx = cv.getContext('2d');
 var ov = document.getElementById('ov');
@@ -766,16 +720,6 @@ document.addEventListener('mouseup', function(e) {
 document.addEventListener('mouseleave', function() { mouseDown = false; });
 
 window.addEventListener('resize', rsz);
-
-// Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js').then(() => {
-    console.log('✓ Service Worker aktif');
-  }).catch(err => {
-    console.log('Service Worker yüklenemedi:', err);
-  });
-}
-
 ov.style.display = 'flex';
 rsz();
 </script>
