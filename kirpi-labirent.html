@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kirpi Labirent</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; cursor: pointer; }
+body { background: #1a1a2e; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+h1 { color: #fff; font-size: 20px; margin: 8px 0 2px; }
+.sub { color: #aaa; font-size: 12px; margin-bottom: 6px; }
+.hud { display: flex; gap: 10px; margin-bottom: 6px; }
+.hi { background: #16213e; border-radius: 8px; padding: 4px 12px; color: #fff; font-size: 13px; border: 1px solid #0f3460; }
+.hi b { color: #f5a623; }
+canvas { display: block; border-radius: 12px; }
+.pad { margin-top: 12px; display: grid; grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px; gap: 8px; }
+.pad button { cursor: pointer; background: #16213e; border: 2px solid #0f3460; border-radius: 12px; color: #fff; font-size: 26px; width: 60px; height: 60px; }
+.pad button:active { background: #0f3460; }
+.u { grid-column:2; grid-row:1; }
+.l { grid-column:1; grid-row:2; }
+.d { grid-column:2; grid-row:2; }
+.r { grid-column:3; grid-row:2; }
+#ov { position: fixed; inset: 0; background: rgba(0,0,0,0.88); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99; }
+#ov h2 { color: #f5a623; font-size: 30px; margin-bottom: 12px; }
+#ov p { color: #fff; font-size: 16px; text-align: center; line-height: 1.7; margin-bottom: 8px; }
+#sb { cursor: pointer; background: #f5a623; color: #1a1a2e; border: none; border-radius: 14px; padding: 18px 48px; font-size: 22px; font-weight: 700; margin-top: 16px; }
+#err { color: #ff6b6b; font-size: 12px; margin-top: 12px; max-width: 280px; text-align: center; display: none; }
+</style>
+</head>
+<body>
+<h1>🦔 Kirpi Labirent</h1>
+<p class="sub">Labirenti geç, elmaları topla!</p>
+<div class="hud">
+  <div class="hi">Bölüm: <b id="lv">1</b></div>
+  <div class="hi">⭐ <b id="sc">0</b></div>
+  <div class="hi">🍎 <b id="gm">0/3</b></div>
+</div>
+<canvas id="c"></canvas>
+<div class="pad">
+  <button class="u" id="bU">▲</button>
+  <button class="l" id="bL">◀</button>
+  <button class="d" id="bD">▼</button>
+  <button class="r" id="bR">▶</button>
+</div>
+<div id="ov">
+  <h2>🦔 Kirpi Labirent</h2>
+  <p>Labirenti geç,<br>yoldaki elmaları topla!</p>
+  <button id="sb">BAŞLA 🎉</button>
+  <p id="err"></p>
+</div>
+
+<script>
+var cv = document.getElementById('c');
+var ctx = cv.getContext('2d');
+var ov = document.getElementById('ov');
+var err = document.getElementById('err');
+
+var C=11, R=11, SZ=34;
+var W=1, F=0, G=2, E=3;
+var lv=1, sc=0, gm=0, tg=0;
+var px=1, py=1;
+var grid=null, parts=[], ep=0, anim=null;
+
+var PAL=[
+  {bg:'#e8f5e9',w:'#388e3c',wt:'#66bb6a',f:'#c8e6c9'},
+  {bg:'#e3f2fd',w:'#1565c0',wt:'#42a5f5',f:'#bbdefb'},
+  {bg:'#fff3e0',w:'#e65100',wt:'#ff8f00',f:'#ffe0b2'},
+  {bg:'#fce4ec',w:'#880e4f',wt:'#e91e63',f:'#f8bbd0'}
+];
+var pal = PAL[0];
+
+function rsz() {
+  var m = Math.min(window.innerWidth - 16, window.innerHeight * 0.48);
+  SZ = Math.floor(m / C);
+  cv.width = C * SZ;
+  cv.height = R * SZ;
+}
+
+function makeGrid() {
+  var g = [];
+  for (var i = 0; i < R; i++) {
+    g[i] = [];
+    for (var j = 0; j < C; j++) g[i][j] = W;
+  }
+  return g;
+}
+
+function carveMaze(g) {
+  var vis = [];
+  for (var i = 0; i < R; i++) { vis[i] = []; for (var j = 0; j < C; j++) vis[i][j] = false; }
+  function cr(x, y) {
+    vis[y][x] = true;
+    g[y][x] = F;
+    var dirs = [[0,-2],[0,2],[-2,0],[2,0]];
+    dirs.sort(function() { return Math.random() - 0.5; });
+    for (var i = 0; i < 4; i++) {
+      var nx = x + dirs[i][0], ny = y + dirs[i][1];
+      if (nx >= 0 && nx < C && ny >= 0 && ny < R && !vis[ny][nx]) {
+        g[y + dirs[i][1]/2][x + dirs[i][0]/2] = F;
+        cr(nx, ny);
+      }
+    }
+  }
+  cr(1, 1);
+}
+
+function placeGems() {
+  var fl = [];
+  for (var y = 0; y < R; y++)
+    for (var x = 0; x < C; x++)
+      if (grid[y][x] === F && !(x===1&&y===1) && !(x===C-2&&y===R-2))
+        fl.push([x, y]);
+  fl.sort(function() { return Math.random() - 0.5; });
+  var n = 0;
+  for (var i = 0; i < fl.length && n < 3; i++) {
+    grid[fl[i][1]][fl[i][0]] = G;
+    n++;
+  }
+  return n;
+}
+
+function init() {
+  pal = PAL[(lv - 1) % 4];
+  grid = makeGrid();
+  carveMaze(grid);
+  grid[1][1] = F;
+  grid[R-2][C-2] = E;
+  tg = placeGems();
+  gm = 0;
+  parts = [];
+  px = 1;
+  py = 1;
+  document.getElementById('lv').textContent = lv;
+  hud();
+}
+
+function hud() {
+  document.getElementById('sc').textContent = sc;
+  document.getElementById('gm').textContent = gm + '/' + tg;
+}
+
+function move(dx, dy) {
+  if (!grid) return;
+  var nx = px + dx, ny = py + dy;
+  if (nx < 0 || nx >= C || ny < 0 || ny >= R) return;
+  var cell = grid[ny][nx];
+  if (cell === W) return;
+  px = nx; py = ny;
+  if (cell === G) {
+    grid[ny][nx] = F; gm++; sc += 100;
+    for (var i = 0; i < 8; i++) {
+      var a = Math.PI * 2 / 8 * i;
+      parts.push({x: nx*SZ+SZ/2, y: ny*SZ+SZ/2, vx: Math.cos(a)*2.5, vy: Math.sin(a)*2.5, l: 1});
+    }
+    hud();
+  }
+  if (cell === E) { sc += 200 + gm * 50; lv++; setTimeout(win, 300); }
+}
+
+function win() {
+  ov.innerHTML =
+    '<h2>🎉 Aferin!</h2>' +
+    '<p>Bölüm ' + (lv-1) + ' bitti!<br>Puan: ' + sc + '</p>' +
+    '<button id="sb" style="cursor:pointer;background:#f5a623;color:#1a1a2e;border:none;border-radius:14px;padding:18px 48px;font-size:22px;font-weight:700;margin-top:16px;">DEVAM ▶</button>';
+  ov.style.display = 'flex';
+  document.getElementById('sb').onclick = go;
+}
+
+function go() {
+  try {
+    ov.style.display = 'none';
+    rsz();
+    init();
+    if (!anim) loop();
+  } catch(e) {
+    ov.style.display = 'flex';
+    err.style.display = 'block';
+    err.textContent = 'Hata: ' + e.message;
+  }
+}
+
+document.getElementById('sb').onclick = go;
+
+function drawCell(x, y, cell) {
+  var px2 = x*SZ, py2 = y*SZ;
+  if (cell === W) {
+    ctx.fillStyle = pal.w; ctx.fillRect(px2,py2,SZ,SZ);
+    ctx.fillStyle = pal.wt; ctx.fillRect(px2+2,py2+2,SZ-4,Math.max(4,SZ*0.17));
+  } else {
+    ctx.fillStyle = pal.f; ctx.fillRect(px2,py2,SZ,SZ);
+  }
+  if (cell === G) {
+    var s = 0.9 + 0.1*Math.sin(Date.now()/400+x+y);
+    ctx.save(); ctx.translate(px2+SZ/2,py2+SZ/2); ctx.scale(s,s);
+    ctx.fillStyle='#e53935'; ctx.beginPath(); ctx.arc(0,SZ*0.05,SZ*0.25,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#388e3c'; ctx.fillRect(-SZ*0.05,-SZ*0.25,SZ*0.1,SZ*0.2);
+    ctx.restore();
+  }
+  if (cell === E) {
+    ctx.fillStyle = 'rgba(255,214,0,'+(0.65+0.3*Math.sin(ep*Math.PI*2))+')';
+    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+    ctx.font = (SZ*0.52)+'px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+  }
+}
+
+function drawKirpi() {
+  var cx=px*SZ+SZ/2, cy=py*SZ+SZ/2, s=SZ/38;
+  ctx.save(); ctx.translate(cx,cy); ctx.scale(s,s);
+  ctx.fillStyle='#795548'; ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#4e342e'; ctx.lineWidth=2;
+  var sp=[[0,-13],[5,-12],[-5,-12],[8,-9],[-8,-9],[11,-5],[-11,-5]];
+  for(var i=0;i<sp.length;i++){
+    ctx.beginPath(); ctx.moveTo(sp[i][0]*0.3,sp[i][1]*0.3); ctx.lineTo(sp[i][0],sp[i][1]); ctx.stroke();
+  }
+  ctx.fillStyle='#d7ccc8'; ctx.beginPath(); ctx.ellipse(6,2,7,6,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(10,0,2,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(11,-0.5,0.7,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e91e63'; ctx.beginPath(); ctx.arc(13,2,1.4,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+function loop(ts) {
+  ts = ts || 0;
+  ep = (ts / 2000) % 1;
+  ctx.fillStyle = pal.bg;
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  if (grid) {
+    for (var y = 0; y < R; y++)
+      for (var x = 0; x < C; x++)
+        drawCell(x, y, grid[y][x]);
+  }
+  for (var i = parts.length-1; i >= 0; i--) {
+    var p = parts[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.12; p.l-=0.04;
+    if (p.l<=0){parts.splice(i,1);continue;}
+    ctx.globalAlpha=p.l; ctx.fillStyle='#f5a623';
+    ctx.beginPath(); ctx.arc(p.x,p.y,SZ*0.13*p.l,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  if (grid) drawKirpi();
+  anim = requestAnimationFrame(loop);
+}
+
+document.addEventListener('keydown', function(e) {
+  var m = {ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+  if (m[e.key]) { e.preventDefault(); move(m[e.key][0],m[e.key][1]); }
+});
+
+document.getElementById('bU').onclick = function() { move(0,-1); };
+document.getElementById('bD').onclick = function() { move(0,1); };
+document.getElementById('bL').onclick = function() { move(-1,0); };
+document.getElementById('bR').onclick = function() { move(1,0); };
+
+window.addEventListener('resize', rsz);
+rsz();
+</script>
+</body>
+</html>
