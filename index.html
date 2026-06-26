@@ -231,22 +231,22 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 10px calc(var(--safe-bottom) + 12px);
-  gap: 6px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 50%, transparent 100%);
+  padding: 14px 10px 20px;
+  gap: 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.88) 60%, transparent 100%);
 }
 
 #startBtn {
-  width: 200px;
-  height: 48px;
+  width: 260px;
+  height: 56px;
   border: none;
-  border-radius: 24px;
+  border-radius: 28px;
   background: linear-gradient(135deg, #00f5ff, #0095ff, #0066ff);
   color: #fff;
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 13px;
+  letter-spacing: 3px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(0,149,255,0.7);
+  box-shadow: 0 0 24px rgba(0,149,255,0.8);
   text-shadow: 0 0 8px rgba(255,255,255,0.8);
   animation: pulse 2s ease-in-out infinite;
   flex-shrink: 0;
@@ -255,19 +255,19 @@ canvas {
 #startBtn:active { transform: scale(0.95); }
 
 @keyframes pulse {
-  0%,100% { box-shadow: 0 0 18px rgba(0,149,255,0.6); }
-  50% { box-shadow: 0 0 32px rgba(0,200,255,0.9); }
+  0%,100% { box-shadow: 0 0 20px rgba(0,149,255,0.6); }
+  50% { box-shadow: 0 0 40px rgba(0,200,255,1); }
 }
 
 .btn {
-  width: 155px;
-  height: 38px;
+  width: 190px;
+  height: 44px;
   border: 2px solid;
-  border-radius: 19px;
+  border-radius: 22px;
   background: transparent;
-  font-size: 9px;
+  font-size: 6px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.5px;
   cursor: pointer;
   flex-shrink: 0;
   transition: transform 0.1s;
@@ -279,15 +279,16 @@ canvas {
   color: #00d4ff;
   border-color: #00d4ff;
   text-shadow: 0 0 8px rgba(0,212,255,0.8);
-  box-shadow: 0 0 10px rgba(0,212,255,0.3);
+  box-shadow: 0 0 12px rgba(0,212,255,0.3);
 }
 
 .btn-red {
   color: #ff0055;
   border-color: #ff0055;
   text-shadow: 0 0 8px rgba(255,0,85,0.8);
-  box-shadow: 0 0 10px rgba(255,0,85,0.3);
+  box-shadow: 0 0 12px rgba(255,0,85,0.3);
 }
+
 /* Bölüm seçim */
 #lv-ov {
   background: rgba(10,10,30,0.97);
@@ -456,94 +457,6 @@ canvas {
   border-color: #f5a623;
   text-shadow: 0 0 8px rgba(245,166,35,0.8);
 }
-
-/* ── GAME OVER POPUP ── */
-.gameover-overlay {
-  position: fixed; 
-  inset: 0; 
-  background: rgba(0,0,0,0.8);
-  display: none; 
-  align-items: center; 
-  justify-content: center;
-  z-index: 300; 
-  backdrop-filter: blur(6px);
-}
-
-.gameover-overlay.active { display: flex; }
-
-.gameover-box {
-  background: linear-gradient(145deg,#1a0010,#3d0020);
-  border: 2px solid #ff0055; 
-  border-radius: 20px;
-  padding: 28px 24px 22px; 
-  width: min(300px,85vw);
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  gap: 12px;
-  box-shadow: 0 0 50px rgba(255,0,85,0.5), 0 20px 60px rgba(0,0,0,0.7);
-  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-}
-
-.gameover-emoji { 
-  font-size: 48px; 
-  line-height: 1; 
-  animation: shake 0.5s ease infinite alternate; 
-}
-
-@keyframes shake { 
-  from { transform:rotate(-5deg); } 
-  to { transform:rotate(5deg); } 
-}
-
-.gameover-title { 
-  color: #ff0055; 
-  font-size: 14px; 
-  text-shadow: 2px 2px 0 #800028; 
-  letter-spacing: 2px; 
-}
-
-.gameover-txt { 
-  color: rgba(255,255,255,0.7); 
-  font-size: 5px; 
-  text-align: center; 
-  line-height: 2; 
-  letter-spacing: 0.5px; 
-}
-
-.gameover-btn-row { 
-  display: flex; 
-  gap: 10px; 
-  width: 100%; 
-  margin-top: 4px; 
-}
-
-.gameover-btn { 
-  flex: 1; 
-  height: 44px; 
-  border: 2px solid; 
-  border-radius: 22px; 
-  background: transparent; 
-  font-size: 6px; 
-  font-weight: 700; 
-  letter-spacing: 1px; 
-  cursor: pointer; 
-  transition: transform 0.1s; 
-}
-
-.gameover-btn:active { transform: scale(0.95); }
-
-.gameover-btn.retry { 
-  background: linear-gradient(135deg,#ff0055,#cc0040); 
-  border-color: #ff0055; 
-  color: #fff; 
-  box-shadow: 0 0 16px rgba(255,0,85,0.5); 
-}
-
-.gameover-btn.menu { 
-  color: #00d4ff; 
-  border-color: #00d4ff; 
-}
 </style>
 </head>
 <body>
@@ -600,22 +513,6 @@ canvas {
   </div>
 </div>
 
-<!-- GAME OVER POPUP -->
-<div class="gameover-overlay" id="gameoverPopup">
-  <div class="gameover-box">
-    <div class="gameover-emoji">💀</div>
-    <div class="gameover-title">SÜRE BİTTİ!</div>
-    <div class="gameover-txt">
-      BÖLÜM <span id="goLv">1</span><br>
-      PUAN: <span id="goSc">0</span>
-    </div>
-    <div class="gameover-btn-row">
-      <button class="gameover-btn menu" id="goMenu">🏠 MENÜ</button>
-      <button class="gameover-btn retry" id="goRetry">🔄 TEKRAR</button>
-    </div>
-  </div>
-</div>
-
 <!-- ANA EKRAN -->
 <div id="ov" class="overlay active">
   <img src="image.png" id="bgImage" alt="">
@@ -652,19 +549,16 @@ canvas {
 
 /* ── PREVENT SCROLL ── */
 document.addEventListener('touchmove', function(e){
-  if(!e.target.closest('.overlay') && !e.target.closest('.popup-overlay') && !e.target.closest('.gameover-overlay')) e.preventDefault();
+  if(!e.target.closest('.overlay') && !e.target.closest('.popup-overlay')) e.preventDefault();
 },{ passive: false });
 document.addEventListener('gesturestart', function(e){ e.preventDefault(); },{ passive: false });
 
 /* ── VARS ── */
-var blocked = false;
-
 var cv  = document.getElementById('c');
 var ctx = cv.getContext('2d');
 var ov  = document.getElementById('ov');
 var lvOv= document.getElementById('lv-ov');
 var winPopup = document.getElementById('winPopup');
-var gameoverPopup = document.getElementById('gameoverPopup');
 
 var C = 11, R = 17;
 var SZ = 34;
@@ -674,6 +568,7 @@ var lv=1, sc=0, gm=0, tg=3;
 var px=1, py=1;
 var grid=null, parts=[], ep=0, anim=null;
 var maxLv = parseInt(localStorage.getItem('kirpiMaxLv'))||1;
+var blocked = false; // Hareket durdurma değişkeni
 
 /* Timer */
 var timerMax = 60, timerLeft = 60, timerRunning = false, timerInterval = null;
@@ -712,14 +607,12 @@ function vib(type){
     else if(type==='tp') navigator.vibrate([30,20,30]);
     else if(type==='door') navigator.vibrate([80,40,80]);
     else if(type==='win') navigator.vibrate([150,80,150]);
-    else if(type==='gameover') navigator.vibrate([300,100,300,100,300]);
   }
   if(type==='move') beep(200,0.02);
   else if(type==='apple'){ beep(600,0.05); setTimeout(function(){ beep(800,0.08); },60); }
   else if(type==='tp'){ beep(400,0.1); setTimeout(function(){ beep(700,0.1); },100); }
   else if(type==='door'){ beep(800,0.12); setTimeout(function(){ beep(1000,0.12); },130); }
   else if(type==='win'){ beep(500,0.08); setTimeout(function(){ beep(700,0.08); },90); setTimeout(function(){ beep(900,0.15); },180); }
-  else if(type==='gameover'){ beep(300,0.2,0.15); setTimeout(function(){ beep(200,0.3,0.15); },200); }
 }
 
 /* ── RESIZE ── */
@@ -818,8 +711,8 @@ function startTimer(){
     if(timerLeft<=0){
       clearInterval(timerInterval);
       timerRunning=false;
-      blocked = true;
-      setTimeout(showGameOver, 800);
+      // time's up - restart level
+      setTimeout(function(){ init(); startTimer(); },500);
     }
   },100);
 }
@@ -843,23 +736,20 @@ var tpLeft  = null; // {x,y}
 var tpRight = null;
 
 function placeTeleports(){
-  // Sol teleport adayları: kolon 0'da, yan tarafı (kolon 1) açık olan satırlar
   var leftCandidates=[];
   for(var y=0;y<R;y++){
-    if(grid[y][1]===F){  // kolon 1 açık mı?
+    if(grid[y][1]===F){
       leftCandidates.push(y);
     }
   }
   
-  // Sağ teleport adayları: kolon 10'da, yan tarafı (kolon 9) açık olan satırlar
   var rightCandidates=[];
   for(var y=0;y<R;y++){
-    if(grid[y][9]===F){  // kolon 9 açık mı?
+    if(grid[y][9]===F){
       rightCandidates.push(y);
     }
   }
   
-  // Sol teleportunu random bir adaydan seç
   if(leftCandidates.length){
     var li=Math.floor(Math.random()*leftCandidates.length);
     var chosenY=leftCandidates[li];
@@ -867,7 +757,6 @@ function placeTeleports(){
     grid[chosenY][0]=T;
   }
   
-  // Sağ teleportunu random bir adaydan seç
   if(rightCandidates.length){
     var ri=Math.floor(Math.random()*rightCandidates.length);
     var chosenY2=rightCandidates[ri];
@@ -876,9 +765,10 @@ function placeTeleports(){
   }
 }
 
+/* ── INIT ── */
 function init(){
-  blocked = false;
-  pal = PAL[(lv-1)%PAL.length];
+  blocked = false; // Her bölüm başlangıcında hareketi serbest bırak
+  pal = PAL[(lv-1)%PAL.length]; // Bölüm sayısına göre 10 paletten birini seç
   grid = makeGrid();
   carveMaze(grid);
   grid[1][1]=F;
@@ -899,7 +789,8 @@ function init(){
 /* ── MOVE ── */
 function move(dx,dy){
   if(!grid) return;
-  if(blocked) return; // EKLE
+  if(blocked) return; // Hareket kilitliyse işlem yapma
+  
   var nx=px+dx, ny=py+dy;
   if(nx<0||nx>=C||ny<0||ny>=R) return;
   var cell=grid[ny][nx];
@@ -909,22 +800,26 @@ function move(dx,dy){
   if(cell===T){
     vib('tp');
     spawnParticles(px,py,'#00d4ff');
+    
+    // Sol teleporta girdik, sağdan çık
     if(tpLeft && nx===tpLeft.x && ny===tpLeft.y && tpRight){
       px=tpRight.x; 
       py=tpRight.y;
     } 
+    // Sağ teleporta girdik, soldan çık
     else if(tpRight && nx===tpRight.x && ny===tpRight.y && tpLeft){
       px=tpLeft.x; 
       py=tpLeft.y;
     }
+    
     spawnParticles(px,py,'#00d4ff');
     return;
   }
 
-  // ÇIKIŞ KAPISI KONTROLÜ
+  // ÇIKIŞ KAPISI KONTROLÜ - Hızlı geçişi önlemek için en başta kilitle
   if(cell===E){
-    blocked = true; // EKLE - anında kilitle
-    px=nx; py=ny;
+    blocked = true; // Hareketi anında durdur
+    px=nx; py=ny; // Kirpiyi kapının üstüne yerleştir
     stopTimer();
     sc += 200 + Math.floor(timerLeft)*10;
     lv++;
@@ -987,31 +882,12 @@ document.getElementById('popupLevels').onclick = function(){
   openLevels2();
 };
 
-/* ── GAME OVER ── */
-function showGameOver(){
-  document.getElementById('goLv').textContent = lv;
-  document.getElementById('goSc').textContent = sc;
-  gameoverPopup.classList.add('active');
-  vib('gameover');
-}
-
-document.getElementById('goRetry').onclick = function(){
-  gameoverPopup.classList.remove('active');
-  go();
-};
-
-document.getElementById('goMenu').onclick = function(){
-  gameoverPopup.classList.remove('active');
-  ov.classList.add('active');
-};
-
 /* ── GO ── */
 function go(){
   initAudio();
   ov.classList.remove('active');
   lvOv.classList.remove('active');
   winPopup.classList.remove('active');
-  gameoverPopup.classList.remove('active');
   rsz();
   init();
   startTimer();
@@ -1147,12 +1023,12 @@ document.addEventListener('keydown',function(e){
 
 var sx=0,sy=0;
 document.addEventListener('touchstart',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
   sx=e.touches[0].clientX; sy=e.touches[0].clientY;
 },{ passive:true });
 
 document.addEventListener('touchend',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
   var dx=e.changedTouches[0].clientX-sx;
   var dy=e.changedTouches[0].clientY-sy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<18) return;
@@ -1162,12 +1038,12 @@ document.addEventListener('touchend',function(e){
 
 var msx=0,msy=0,md=false;
 document.addEventListener('mousedown',function(e){
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
   md=true; msx=e.clientX; msy=e.clientY;
 });
 document.addEventListener('mouseup',function(e){
   if(!md) return;
-  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')||e.target.closest('.gameover-overlay')) return;
+  if(e.target.closest('.overlay')||e.target.closest('.popup-overlay')) return;
   md=false;
   var dx=e.clientX-msx, dy=e.clientY-msy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<10) return;
