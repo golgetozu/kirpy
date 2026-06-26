@@ -8,115 +8,125 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kirpi Labirent">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a1a2e' width='180' height='180'/><text x='90' y='100' font-size='100' text-anchor='middle' dominant-baseline='middle'>🦔</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a1a2e' width='180' height='180'/><text x='90' y='100' font-size='100' text-anchor='middle' dominant-baseline='middle'>🦔</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a2e' width='192' height='192'/><text x='96' y='110' font-size='140' text-anchor='middle' dominant-baseline='middle'>🦔</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a1a2e' width='192' height='192'/><text x='96' y='110' font-size='140' text-anchor='middle' dominant-baseline='middle'>🦔</text></svg>">
 
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22Kirpi Labirent%22,
-  %22short_name%22:%22Labirent%22,
-  %22description%22:%22Eğlenceli labirent oyunu. Elmaları topla ve çık!%22,
-  %22start_url%22:%22./%22,
-  %22display%22:%22standalone%22,
-  %22orientation%22:%22portrait-primary%22,
-  %22scope%22:%22./%22,
-  %22theme_color%22:%22%231a1a2e%22,
-  %22background_color%22:%22%231a1a2e%22,
-  %22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect fill=%27%231a1a2e%27 width=%27192%27 height=%27192%27/%3E%3Ctext x=%2796%27 y=%27110%27 font-size=%27140%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27%3E🦔%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%22}]
-}">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Kirpi%20Labirent%22,%22short_name%22:%22Labirent%22,%22description%22:%22Eğlenceli%20labirent%20oyunu.%20Elmaları%20topla%20ve%20çık!%22,%22start_url%22:%22./%22,%22display%22:%22standalone%22,%22orientation%22:%22portrait%22,%22scope%22:%22./%22,%22theme_color%22:%22%231a1a2e%22,%22background_color%22:%22%231a1a2e%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'%3E%3Crect%20fill='%231a1a2e'%20width='192'%20height='192'/%3E%3Ctext%20x='96'%20y='110'%20font-size='140'%20text-anchor='middle'%20dominant-baseline='middle'%3E🦔%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
 
 <title>Kirpi Labirent</title>
-<link rel="preload" href="image.png" as="image">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; font-family: 'Press Start 2P', cursive; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  font-family: 'Press Start 2P', cursive;
+}
 
 html, body {
+  width: 100vw;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  position: fixed;
+  top: 0;
+  left: 0;
   background: #1a1a2e;
-  touch-action: none;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  padding-top: max(0px, env(safe-area-inset-top));
-  padding-bottom: max(0px, env(safe-area-inset-bottom));
 }
 
 .top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  padding: 3px 0;
+  flex: 0 0 auto;
   width: 100%;
   background: #1a1a2e;
+  padding: 3px 5px 2px 5px;
+  text-align: center;
   z-index: 10;
-  min-height: 40px;
+}
+
+h1 {
+  color: #f5a623;
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+  text-shadow: 2px 2px 0px #7a5010;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.hud {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.hi {
+  background: #16213e;
+  border-radius: 3px;
+  padding: 1px 4px;
+  color: #fff;
+  font-size: 4px;
+  border: 1px solid #f5a623;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.hi b {
+  color: #f5a623;
 }
 
 .mid {
   flex: 1;
   width: 100%;
-  overflow: hidden;
-  background: #1a1a2e;
   position: relative;
+  background: #1a1a2e;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-h1 { 
-  color: #f5a623; 
-  font-size: 10px; 
-  margin: 1px 0; 
-  text-shadow: 2px 2px 0px #7a5010; 
-  letter-spacing: 1px; 
-  line-height: 1.2;
-}
-
-.hud { 
-  display: flex; 
-  gap: 4px; 
-  margin: 1px 0 0 0;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.hi { 
-  background: #16213e; 
-  border-radius: 3px; 
-  padding: 2px 5px; 
-  color: #fff; 
-  font-size: 4px; 
-  border: 1px solid #f5a623; 
-  letter-spacing: 0.5px; 
-  white-space: nowrap;
-}
-
-.hi b { color: #f5a623; }
-
-canvas { 
-  display: block; 
-  touch-action: none; 
-}
-
-.overlay { 
-  position: fixed; 
-  inset: 0; 
-  background: rgba(0,0,0,0.95); 
-  display: none; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: flex-end;
-  z-index: 99; 
   overflow: hidden;
-  padding-top: max(0px, env(safe-area-inset-top));
-  padding-bottom: max(0px, env(safe-area-inset-bottom));
+  min-height: 0;
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: #000;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 99;
+  overflow: hidden;
+}
+
+.overlay.active {
+  display: flex;
 }
 
 #bgImage {
@@ -130,45 +140,11 @@ canvas {
   z-index: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.5s ease-in;
+  transition: opacity 0.5s ease;
 }
 
 #bgImage.loaded {
   opacity: 1;
-}
-
-.btn-container {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding-bottom: max(15px, env(safe-area-inset-bottom, 15px));
-  background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
-  padding-top: 20px;
-}
-
-.overlay h2 { 
-  color: #f5a623; 
-  font-size: 16px; 
-  margin-bottom: 12px; 
-  text-align: center; 
-  text-shadow: 3px 3px 0px #7a5010; 
-  letter-spacing: 2px; 
-  position: relative;
-  z-index: 1;
-}
-
-.overlay p { 
-  color: #fff; 
-  font-size: 7px; 
-  text-align: center; 
-  line-height: 2; 
-  margin-bottom: 6px; 
-  letter-spacing: 0.5px; 
-  position: relative;
-  z-index: 1;
 }
 
 #loadingSpinner {
@@ -189,13 +165,46 @@ canvas {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
+}
+
+.btn-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 10px 20px 10px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+  gap: 8px;
+}
+
+.overlay h2 {
+  color: #f5a623;
+  font-size: 14px;
+  margin: 0 0 10px 0;
+  text-align: center;
+  text-shadow: 3px 3px 0px #7a5010;
+  letter-spacing: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.overlay p {
+  color: #fff;
+  font-size: 6px;
+  text-align: center;
+  line-height: 1.8;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
 }
 
 #startBtn {
-  position: relative;
-  width: 270px;
+  width: 280px;
   height: 60px;
   border: none;
   border-radius: 30px;
@@ -203,183 +212,111 @@ canvas {
   color: #fff;
   font-size: 13px;
   letter-spacing: 3px;
-  margin-bottom: 8px;
-  box-shadow: 
-    0 0 20px rgba(0,149,255,0.8),
-    0 0 40px rgba(0,149,255,0.4),
-    inset 0 2px 15px rgba(255,255,255,0.3),
-    inset 0 -2px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 0 30px rgba(0,149,255,0.8);
   text-shadow: 0 0 10px rgba(255,255,255,0.8);
   animation: pulseGlow 2s ease-in-out infinite;
+  cursor: pointer;
+  position: relative;
   overflow: hidden;
-  z-index: 2;
-}
-
-#startBtn::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(transparent, rgba(255,255,255,0.1), transparent 30%);
-  animation: rotate 4s linear infinite;
-}
-
-#startBtn::after {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  background: linear-gradient(135deg, #00d4ff 0%, #0080ff 100%);
-  border-radius: 28px;
-  z-index: -1;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { 
-    box-shadow: 
-      0 0 20px rgba(0,149,255,0.6),
-      0 0 40px rgba(0,149,255,0.3),
-      inset 0 2px 15px rgba(255,255,255,0.3),
-      inset 0 -2px 15px rgba(0,0,0,0.3);
-  }
-  50% { 
-    box-shadow: 
-      0 0 30px rgba(0,200,255,1),
-      0 0 60px rgba(0,149,255,0.8),
-      inset 0 2px 15px rgba(255,255,255,0.4),
-      inset 0 -2px 15px rgba(0,0,0,0.3);
-  }
-}
-
-@keyframes rotate {
-  100% { transform: rotate(360deg); }
+  transition: transform 0.1s;
 }
 
 #startBtn:active {
   transform: scale(0.95);
 }
 
-.btn { 
-  cursor: pointer; 
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,149,255,0.6); }
+  50% { box-shadow: 0 0 40px rgba(0,200,255,1); }
+}
+
+.btn {
+  width: 200px;
+  height: 50px;
   border: 2px solid;
-  border-radius: 22px; 
-  padding: 8px 20px; 
-  font-size: 7px; 
-  font-weight: 700; 
-  margin-top: 8px; 
-  width: 180px; 
-  text-align: center; 
-  transition: 0.3s; 
-  touch-action: manipulation; 
-  letter-spacing: 1.5px; 
+  border-radius: 25px;
+  padding: 0;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  background: transparent;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-  background: transparent;
+  transition: transform 0.1s;
 }
 
-.btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background: linear-gradient(135deg, currentColor, transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.5;
+.btn:active {
+  transform: scale(0.95);
 }
 
-.btn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.btn:active::after {
-  width: 300px;
-  height: 300px;
-}
-
-.btn-blue { 
+.btn-blue {
   color: #00d4ff;
   border-color: #00d4ff;
   text-shadow: 0 0 8px rgba(0,212,255,0.8);
-  box-shadow: 
-    0 0 15px rgba(0,212,255,0.4),
-    inset 0 0 15px rgba(0,212,255,0.1);
+  box-shadow: 0 0 15px rgba(0,212,255,0.4);
 }
 
-.btn-blue:active { 
-  background: rgba(0,212,255,0.2);
-  box-shadow: 
-    0 0 25px rgba(0,212,255,0.8),
-    inset 0 0 20px rgba(0,212,255,0.3);
-}
-
-.btn-red { 
+.btn-red {
   color: #ff0055;
   border-color: #ff0055;
   text-shadow: 0 0 8px rgba(255,0,85,0.8);
-  box-shadow: 
-    0 0 15px rgba(255,0,85,0.4),
-    inset 0 0 15px rgba(255,0,85,0.1);
+  box-shadow: 0 0 15px rgba(255,0,85,0.4);
 }
 
-.btn-red:active { 
-  background: rgba(255,0,85,0.2);
-  box-shadow: 
-    0 0 25px rgba(255,0,85,0.8),
-    inset 0 0 20px rgba(255,0,85,0.3);
+.lv-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 15px;
+  overflow-y: auto;
+  max-width: 100%;
+  justify-items: center;
+  position: relative;
+  z-index: 1;
 }
 
-.lv-grid { 
-  display: grid; 
-  grid-template-columns: repeat(5, 1fr); 
-  gap: 8px; 
-  margin: 12px 0; 
-  max-height: 50vh; 
-  overflow-y: auto; 
-  padding: 8px; 
-  width: 100%;
+.lv-btn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: 0.15s;
+  box-shadow: 0 3px 0px #1a5c1a;
 }
 
-.lv-btn { 
-  width: 45px; 
-  height: 45px; 
-  border-radius: 6px; 
-  border: none; 
-  font-size: 8px; 
-  font-weight: bold; 
-  color: white; 
-  transition: 0.15s; 
-  touch-action: manipulation; 
-  box-shadow: 0 3px 0px #1a5c1a; 
+.lv-unlocked {
+  background: #388e3c;
 }
 
-.lv-unlocked { background: #388e3c; cursor: pointer; }
-.lv-unlocked:active { transform: translateY(2px); box-shadow: 0 1px 0px #1a5c1a; }
-.lv-locked { background: #333; opacity: 0.5; pointer-events: none; box-shadow: 0 3px 0px #111; }
+.lv-unlocked:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0px #1a5c1a;
+}
 
-.swipe-hint { 
-  position: absolute; 
-  bottom: 8px; 
-  left: 50%; 
-  transform: translateX(-50%); 
-  color: rgba(255,255,255,0.2); 
-  font-size: 4px; 
-  text-align: center; 
-  pointer-events: none; 
-  letter-spacing: 0.5px; 
-  white-space: nowrap; 
+.lv-locked {
+  background: #333;
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: 0 3px 0px #111;
+}
+
+.swipe-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.15);
+  font-size: 3px;
+  text-align: center;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 </style>
 </head>
@@ -399,7 +336,6 @@ canvas {
   <div class="swipe-hint">↑ ↓ ← → KAYDIRARAK HAREKET ET</div>
 </div>
 
-<!-- Ana Ekran Overlay -->
 <div id="ov" class="overlay">
   <div id="loadingSpinner"><div class="spinner"></div></div>
   <img src="image.png" id="bgImage" alt="">
@@ -410,31 +346,40 @@ canvas {
   </div>
 </div>
 
-<!-- Bölüm Seçim Overlay -->
 <div id="lv-ov" class="overlay">
-  <h2>BÖLÜM SEÇ</h2>
+  <div style="position: relative; z-index: 1; text-align: center; padding-top: 20px;">
+    <h2>BÖLÜM SEÇ</h2>
+  </div>
   <div class="lv-grid" id="lv-container"></div>
-  <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
+  <div style="display: flex; justify-content: center; padding: 15px; position: relative; z-index: 1;">
+    <button id="lv-back" class="btn btn-blue">⬅ GERİ</button>
+  </div>
 </div>
 
 <script>
+// Preload image
 window.addEventListener('load', function() {
   var img = new Image();
   img.onload = function() {
     document.getElementById('bgImage').classList.add('loaded');
-    document.getElementById('loadingSpinner').style.display = 'none';
+    var spinner = document.getElementById('loadingSpinner');
+    if (spinner) spinner.style.display = 'none';
   };
   img.onerror = function() {
-    document.getElementById('loadingSpinner').style.display = 'none';
+    var spinner = document.getElementById('loadingSpinner');
+    if (spinner) spinner.style.display = 'none';
   };
   img.src = 'image.png';
 });
 
-// Viewport hack - status bar göz önüne almayan telefonlar için
+// Prevent scrolling
 document.addEventListener('touchmove', function(e) {
-  if (!e.target.closest('.overlay')) {
-    e.preventDefault();
-  }
+  if (e.target.closest('.overlay')) return;
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
 }, { passive: false });
 
 var cv = document.getElementById('c');
@@ -442,15 +387,15 @@ var ctx = cv.getContext('2d');
 var ov = document.getElementById('ov');
 var lvOv = document.getElementById('lv-ov');
 
-var C=11, R=17, SZ=34;
-var W=1, F=0, G=2, E=3;
-var lv=1, sc=0, gm=0, tg=0;
-var px=1, py=1;
-var grid=null, parts=[], ep=0, anim=null;
+var C = 11, R = 17, SZ = 34;
+var W = 1, F = 0, G = 2, E = 3;
+var lv = 1, sc = 0, gm = 0, tg = 0;
+var px = 1, py = 1;
+var grid = null, parts = [], ep = 0, anim = null;
 
 var maxLv = parseInt(localStorage.getItem('kirpiMaxLv')) || 1;
 
-var PAL=[
+var PAL = [
   {bg:'#e8f5e9',w:'#388e3c',wt:'#66bb6a',f:'#c8e6c9'},
   {bg:'#e3f2fd',w:'#1565c0',wt:'#42a5f5',f:'#bbdefb'},
   {bg:'#fff3e0',w:'#e65100',wt:'#ff8f00',f:'#ffe0b2'},
@@ -461,9 +406,12 @@ var pal = PAL[0];
 var audioCtx = null;
 function initAudio() {
   if (!audioCtx) {
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) {}
   }
 }
+
 function playBeep(freq, duration) {
   initAudio();
   if (!audioCtx) return;
@@ -476,29 +424,26 @@ function playBeep(freq, duration) {
   osc.start(audioCtx.currentTime);
   osc.stop(audioCtx.currentTime + duration);
 }
+
 function vib(type) {
   if (navigator.vibrate) {
-    if (type==='move') navigator.vibrate(10);
-    else if (type==='apple') navigator.vibrate(50);
-    else if (type==='door') navigator.vibrate([100,50,100]);
-    else if (type==='win') navigator.vibrate([200,100,200]);
+    if (type === 'move') navigator.vibrate(10);
+    else if (type === 'apple') navigator.vibrate(50);
+    else if (type === 'door') navigator.vibrate([100, 50, 100]);
+    else if (type === 'win') navigator.vibrate([200, 100, 200]);
   }
-  if (type==='move') playBeep(200, 0.02);
-  else if (type==='apple') playBeep(600, 0.1);
-  else if (type==='door') { playBeep(800, 0.15); setTimeout(function(){ playBeep(1000, 0.15); }, 150); }
-  else if (type==='win') { playBeep(500, 0.1); setTimeout(function(){ playBeep(700, 0.1); }, 100); setTimeout(function(){ playBeep(900, 0.2); }, 200); }
+  if (type === 'move') playBeep(200, 0.02);
+  else if (type === 'apple') playBeep(600, 0.1);
+  else if (type === 'door') {
+    playBeep(800, 0.15);
+    setTimeout(function() { playBeep(1000, 0.15); }, 150);
+  }
+  else if (type === 'win') {
+    playBeep(500, 0.1);
+    setTimeout(function() { playBeep(700, 0.1); }, 100);
+    setTimeout(function() { playBeep(900, 0.2); }, 200);
+  }
 }
-
-document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
-document.addEventListener('touchstart', function(e) {
-  if (e.touches.length > 1) e.preventDefault();
-}, { passive: false });
-var lastTouchEnd = 0;
-document.addEventListener('touchend', function(e) {
-  var now = Date.now();
-  if (now - lastTouchEnd < 300) e.preventDefault();
-  lastTouchEnd = now;
-}, { passive: false });
 
 function rsz() {
   var mid = document.querySelector('.mid');
@@ -517,7 +462,6 @@ function rsz() {
 
   cv.style.width = canvasW + 'px';
   cv.style.height = canvasH + 'px';
-  cv.style.display = 'block';
 }
 
 function makeGrid() {
@@ -531,7 +475,11 @@ function makeGrid() {
 
 function carveMaze(g) {
   var vis = [];
-  for (var i = 0; i < R; i++) { vis[i] = []; for (var j = 0; j < C; j++) vis[i][j] = false; }
+  for (var i = 0; i < R; i++) {
+    vis[i] = [];
+    for (var j = 0; j < C; j++) vis[i][j] = false;
+  }
+
   function cr(x, y) {
     vis[y][x] = true;
     g[y][x] = F;
@@ -612,38 +560,40 @@ function move(dx, dy) {
   if (cell === E) {
     sc += 200 + gm * 50;
     lv++;
-    if(lv > maxLv) { maxLv = lv; localStorage.setItem('kirpiMaxLv', maxLv); }
+    if(lv > maxLv) {
+      maxLv = lv;
+      localStorage.setItem('kirpiMaxLv', maxLv);
+    }
     vib('win');
     setTimeout(win, 300);
   }
 }
 
 function win() {
-  ov.innerHTML =
-    '<img src="image.png" id="bgImage" class="loaded" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;">' +
+  ov.innerHTML = '<img src="image.png" id="bgImage" class="loaded" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;">' +
     '<div class="btn-container">' +
-    '<h2 style="color:#f5a623;font-size:16px;margin-bottom:12px;text-align:center;text-shadow:3px 3px 0px #7a5010;letter-spacing:2px;">🎉 AFERİN!</h2>' +
-    '<p style="color:#fff;font-size:7px;text-align:center;line-height:2;margin-bottom:6px;letter-spacing:0.5px;">BÖLÜM ' + (lv-1) + ' BİTTİ!<br>PUAN: ' + sc + '</p>' +
-    '<button id="sb" class="btn btn-blue" style="width:270px;height:55px;font-size:11px;border-radius:28px;display:flex;align-items:center;justify-content:center;margin-bottom:0;margin-top:0;">▶ DEVAM</button>' +
-    '<button id="lb" class="btn btn-blue" style="margin-top:8px;">📋 BÖLÜMLER</button>' +
+    '<h2 style="color:#f5a623;font-size:14px;margin:0 0 8px 0;text-align:center;text-shadow:3px 3px 0px #7a5010;letter-spacing:2px;">🎉 AFERİN!</h2>' +
+    '<p style="color:#fff;font-size:6px;text-align:center;line-height:1.8;margin:0 0 8px 0;letter-spacing:0.5px;">BÖLÜM ' + (lv-1) + ' BİTTİ!<br>PUAN: ' + sc + '</p>' +
+    '<button id="sb" class="btn btn-blue" style="width:280px;height:50px;margin:0;">▶ DEVAM</button>' +
+    '<button id="lb" class="btn btn-blue">📋 BÖLÜMLER</button>' +
     '</div>';
-  ov.style.display = 'flex';
+  ov.classList.add('active');
   document.getElementById('sb').onclick = go;
   document.getElementById('lb').onclick = openLevels;
 }
 
 function go() {
   initAudio();
-  ov.style.display = 'none';
-  lvOv.style.display = 'none';
+  ov.classList.remove('active');
+  lvOv.classList.remove('active');
   rsz();
   init();
   if (!anim) loop();
 }
 
 function openLevels() {
-  ov.style.display = 'none';
-  lvOv.style.display = 'flex';
+  ov.classList.remove('active');
+  lvOv.classList.add('active');
   var cont = document.getElementById('lv-container');
   cont.innerHTML = '';
   for(var i=1; i<=30; i++) {
@@ -671,48 +621,81 @@ document.getElementById('rb').onclick = function() {
 };
 
 document.getElementById('lv-back').onclick = function() {
-  lvOv.style.display = 'none';
-  ov.style.display = 'flex';
+  lvOv.classList.remove('active');
+  ov.classList.add('active');
 };
 
 function drawCell(x, y, cell) {
   var px2 = x * SZ;
   var py2 = y * SZ;
   if (cell === W) {
-    ctx.fillStyle = pal.w; ctx.fillRect(px2,py2,SZ,SZ);
-    ctx.fillStyle = pal.wt; ctx.fillRect(px2+2,py2+2,SZ-4,Math.max(4,SZ*0.17));
+    ctx.fillStyle = pal.w;
+    ctx.fillRect(px2, py2, SZ, SZ);
+    ctx.fillStyle = pal.wt;
+    ctx.fillRect(px2+2, py2+2, SZ-4, Math.max(4, SZ*0.17));
   } else {
-    ctx.fillStyle = pal.f; ctx.fillRect(px2,py2,SZ,SZ);
+    ctx.fillStyle = pal.f;
+    ctx.fillRect(px2, py2, SZ, SZ);
   }
   if (cell === G) {
     var s = 0.9 + 0.1*Math.sin(Date.now()/400+x+y);
-    ctx.save(); ctx.translate(px2+SZ/2,py2+SZ/2); ctx.scale(s,s);
-    ctx.fillStyle='#e53935'; ctx.beginPath(); ctx.arc(0,SZ*0.05,SZ*0.25,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#388e3c'; ctx.fillRect(-SZ*0.05,-SZ*0.25,SZ*0.1,SZ*0.2);
+    ctx.save();
+    ctx.translate(px2+SZ/2, py2+SZ/2);
+    ctx.scale(s, s);
+    ctx.fillStyle='#e53935';
+    ctx.beginPath();
+    ctx.arc(0, SZ*0.05, SZ*0.25, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='#388e3c';
+    ctx.fillRect(-SZ*0.05, -SZ*0.25, SZ*0.1, SZ*0.2);
     ctx.restore();
   }
   if (cell === E) {
     ctx.fillStyle = 'rgba(255,214,0,'+(0.65+0.3*Math.sin(ep*Math.PI*2))+')';
-    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(px2+3, py2+3, SZ-6, SZ-6, 5);
+    ctx.fill();
     ctx.font = (SZ*0.52)+'px sans-serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('🚪', px2+SZ/2, py2+SZ/2+1);
   }
 }
 
 function drawKirpi() {
-  var cx=px*SZ+SZ/2, cy=py*SZ+SZ/2, s=SZ/38;
-  ctx.save(); ctx.translate(cx,cy); ctx.scale(s,s);
-  ctx.fillStyle='#795548'; ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='#4e342e'; ctx.lineWidth=2;
+  var cx = px*SZ+SZ/2, cy = py*SZ+SZ/2, s = SZ/38;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s, s);
+  ctx.fillStyle='#795548';
+  ctx.beginPath();
+  ctx.ellipse(0, 2, 13, 9, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle='#4e342e';
+  ctx.lineWidth=2;
   var sp=[[0,-13],[5,-12],[-5,-12],[8,-9],[-8,-9],[11,-5],[-11,-5]];
   for(var i=0;i<sp.length;i++){
-    ctx.beginPath(); ctx.moveTo(sp[i][0]*0.3,sp[i][1]*0.3); ctx.lineTo(sp[i][0],sp[i][1]); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(sp[i][0]*0.3, sp[i][1]*0.3);
+    ctx.lineTo(sp[i][0], sp[i][1]);
+    ctx.stroke();
   }
-  ctx.fillStyle='#d7ccc8'; ctx.beginPath(); ctx.ellipse(6,2,7,6,0,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(10,0,2,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(11,-0.5,0.7,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#e91e63'; ctx.beginPath(); ctx.arc(13,2,1.4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#d7ccc8';
+  ctx.beginPath();
+  ctx.ellipse(6, 2, 7, 6, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#111';
+  ctx.beginPath();
+  ctx.arc(10, 0, 2, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#fff';
+  ctx.beginPath();
+  ctx.arc(11, -0.5, 0.7, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#e91e63';
+  ctx.beginPath();
+  ctx.arc(13, 2, 1.4, 0, Math.PI*2);
+  ctx.fill();
   ctx.restore();
 }
 
@@ -728,11 +711,20 @@ function loop(ts) {
   }
   for (var i = parts.length-1; i >= 0; i--) {
     var p = parts[i];
-    p.x+=p.vx; p.y+=p.vy; p.vy+=0.12; p.l-=0.04;
-    if (p.l<=0){parts.splice(i,1);continue;}
-    ctx.globalAlpha=p.l; ctx.fillStyle='#f5a623';
-    ctx.beginPath(); ctx.arc(p.x,p.y,SZ*0.13*p.l,0,Math.PI*2); ctx.fill();
-    ctx.globalAlpha=1;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.12;
+    p.l -= 0.04;
+    if (p.l <= 0) {
+      parts.splice(i, 1);
+      continue;
+    }
+    ctx.globalAlpha = p.l;
+    ctx.fillStyle = '#f5a623';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, SZ*0.13*p.l, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
   }
   if (grid) drawKirpi();
   anim = requestAnimationFrame(loop);
@@ -740,7 +732,10 @@ function loop(ts) {
 
 document.addEventListener('keydown', function(e) {
   var m = {ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
-  if (m[e.key]) { e.preventDefault(); move(m[e.key][0],m[e.key][1]); }
+  if (m[e.key]) {
+    e.preventDefault();
+    move(m[e.key][0], m[e.key][1]);
+  }
 });
 
 var swipeStartX = 0, swipeStartY = 0;
@@ -749,6 +744,7 @@ document.addEventListener('touchstart', function(e) {
   swipeStartX = e.touches[0].clientX;
   swipeStartY = e.touches[0].clientY;
 }, { passive: true });
+
 document.addEventListener('touchend', function(e) {
   if (e.target.closest('.overlay')) return;
   var dx = e.changedTouches[0].clientX - swipeStartX;
@@ -756,15 +752,21 @@ document.addEventListener('touchend', function(e) {
   var absDx = Math.abs(dx);
   var absDy = Math.abs(dy);
   if (Math.max(absDx, absDy) < 20) return;
-  if (absDx > absDy) { move(dx > 0 ? 1 : -1, 0); }
-  else { move(0, dy > 0 ? 1 : -1); }
+  if (absDx > absDy) {
+    move(dx > 0 ? 1 : -1, 0);
+  } else {
+    move(0, dy > 0 ? 1 : -1);
+  }
 }, { passive: true });
 
 var mouseStartX = 0, mouseStartY = 0, mouseDown = false;
 document.addEventListener('mousedown', function(e) {
   if (e.target.closest('.overlay')) return;
-  mouseDown = true; mouseStartX = e.clientX; mouseStartY = e.clientY;
+  mouseDown = true;
+  mouseStartX = e.clientX;
+  mouseStartY = e.clientY;
 });
+
 document.addEventListener('mouseup', function(e) {
   if (!mouseDown) return;
   if (e.target.closest('.overlay')) return;
@@ -774,18 +776,28 @@ document.addEventListener('mouseup', function(e) {
   var absDx = Math.abs(dx);
   var absDy = Math.abs(dy);
   if (Math.max(absDx, absDy) < 10) return;
-  if (absDx > absDy) { move(dx > 0 ? 1 : -1, 0); }
-  else { move(0, dy > 0 ? 1 : -1); }
+  if (absDx > absDy) {
+    move(dx > 0 ? 1 : -1, 0);
+  } else {
+    move(0, dy > 0 ? 1 : -1);
+  }
 });
-document.addEventListener('mouseleave', function() { mouseDown = false; });
 
-window.addEventListener('resize', rsz);
+document.addEventListener('mouseleave', function() {
+  mouseDown = false;
+});
+
+window.addEventListener('resize', function() {
+  if (!ov.classList.contains('active') && !lvOv.classList.contains('active')) {
+    rsz();
+  }
+});
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js').catch(function() {});
 }
 
-ov.style.display = 'flex';
+ov.classList.add('active');
 rsz();
 </script>
 </body>
