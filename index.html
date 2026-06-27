@@ -613,7 +613,10 @@ function showOverlay(id){
 function hideAllOverlays(){
   ALL_OVS.forEach(function(oid){ document.getElementById(oid).classList.remove('active'); });
 }
-
+// HUD title'a debug bilgisi bas
+document.getElementById('hudTitle').textContent = 
+  'tp:'+(tpLeft?tpLeft.x+','+tpLeft.y:'null')+
+  '|'+(tpRight?tpRight.x+','+tpRight.y:'null');
 /* ══════════════════════════════════════
    FIREBASE LISTENER YÖNETİMİ
 ══════════════════════════════════════ */
