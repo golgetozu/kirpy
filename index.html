@@ -803,19 +803,6 @@ function startMultiplayerAsP2(seed){
     } else { reconstructTeleports(seed); }
     var fn=makeRng(results[2].val()||seed);
     pal=PAL[Math.floor(fn()*PAL.length)];
-    
-    /* P1 kapısını grid'den bul */
-    var found=false;
-    for(var y=0;y<R&&!found;y++){
-      for(var x=0;x<C;x++){
-        if(grid[y][x]===EXIT){
-          p1ExitPos=[x,y];
-          found=true;
-          break;
-        }
-      }
-    }
-    
     hideAllOverlays(); rsz();
     px=P2_SX; py=P2_SY;
     document.getElementById('hudTitle').textContent='2P';
@@ -956,18 +943,17 @@ function move(dx,dy){
     vib('apple'); spawnParticles(nx,ny,'#f5a623');
     updateMyHUD(); document.getElementById('sc').textContent=sc;
     if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
-   if(myApples===5){
-  var ep=findExitSpot();
-  if(ep){
-    exitPos=ep;
-    /* Mutlak referans */
-    if(myId==='p1') p1ExitPos=ep; 
-    else            p2ExitPos=ep;
-    grid[ep[1]][ep[0]]=EXIT;
-    vib('door'); spawnParticles(ep[0],ep[1],'#ffd700');
-    if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
-  }
-}
+    if(myApples===5){
+      var ep=findExitSpot();
+      if(ep){
+        exitPos=ep;
+        /* Mutlak referans */
+        if(myId==='p1') p1ExitPos=ep; else p2ExitPos=ep;
+        grid[ep[1]][ep[0]]=EXIT;
+        vib('door'); spawnParticles(ep[0],ep[1],'#ffd700');
+        if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
+      }
+    }
   }
   if(isMultiplayer) pushMyPos();
 }
