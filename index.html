@@ -1203,13 +1203,14 @@ function loop(ts){
     ctx.globalAlpha=p.l; ctx.fillStyle=p.c||'#f5a623';
     ctx.beginPath(); ctx.arc(p.x,p.y,SZ*0.12,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
   }
-  if(grid){   
-if(isMultiplayer&&opx>=0&&opy>=0){
-  drawKirpi(opx,opy, myId==='p1'); // ben p1 isem rakip p2 = pembe
-  drawKirpi(px,py, myId==='p2');   // ben p2 isem ben pembe
-} else {
-  drawKirpi(px,py,false); // tek oyuncu — kahverengi
-}
+  if(grid){
+    if(isMultiplayer&&opx>=0&&opy>=0){
+      drawKirpi(opx,opy, myId==='p1');
+      drawKirpi(px,py, myId==='p2');
+    } else {
+      drawKirpi(px,py,false);
+    }
+  }
   animFrame=requestAnimationFrame(loop);
 }
 
