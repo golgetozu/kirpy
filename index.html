@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kirpi Labirent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image.png">
+<link rel="icon" href="image.png">
+<meta name="theme-color" content="#1a1a2e">
+<title>Kirpi Labirent</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  font-family: 'Press Start 2P', cursive;
+  touch-action: manipulation;
+}
+html { height: 100%; height: -webkit-fill-available; }
+body {
+  width: 100%; height: 100vh; height: 100dvh;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: #1a1a2e; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding-top: var(--safe-top); padding-bottom: var(--safe-bottom);
+}
+
+/* ── HUD ── */
+.top {
+  flex: 0 0 auto; width: 100%; background: #1a1a2e;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 10px 3px; gap: 6px; min-height: 36px;
+}
+.hud-left {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 1px; min-width: 55px;
+}
+.hud-lv { color: #f5a623; font-size: 9px; text-shadow: 1px 1px 0 #7a5010; white-space: nowrap; }
+.hud-sc { color: #fff; font-size: 9px; white-space: nowrap; }
+.hud-center {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+}
+.hud-title { color: #f5a623; font-size: 10px; text-shadow: 1px 1px 0 #7a5010; letter-spacing: 1px; white-space: nowrap; }
+.timer-bar-wrap {
+  width: 100%; max-width: 120px; height: 8px;
+  background: #16213e; border-radius: 3px; border: 1px solid #f5a623; overflow: hidden;
+}
+.timer-bar {
+  height: 100%; background: linear-gradient(90deg,#f5a623,#ff6b00);
+  border-radius: 3px; width: 100%; transition: background 0.5s;
+}
+.hud-right {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 1px; min-width: 70px;
+}
+.hud-apples { display: flex; align-items: center; gap: 2px; }
+.apple-icon {
+  font-size: 12px; opacity: 0.3; transition: opacity 0.3s;
+  filter: grayscale(100%); line-height: 1;
+}
+.apple-icon.collected { opacity: 1; filter: none; }
+.hud-p2sc { color: #ff6ec7; font-size: 8px; white-space: nowrap; }
+
+/* ── GAME AREA ── */
+.mid {
+  flex: 1; width: 100%; position: relative;
+  background: #1a1a2e; display: flex;
+  align-items: center; justify-content: center;
+  overflow: hidden; min-height: 0;
+}
+canvas { display: block; touch-action: none; }
+.swipe-hint {
+  position: absolute; bottom: 4px; left: 50%;
+  transform: translateX(-50%); color: rgba(255,255,255,0.12);
+  font-size: 7px; pointer-events: none; white-space: nowrap; letter-spacing: 0.5px;
+}
+
+/* ── TOKUM FLOAT ── */
+.tokum-float {
+  position: absolute; pointer-events: none;
+  color: #ff4444; font-size: 10px;
+  text-shadow: 0 0 8px rgba(255,68,68,0.8);
+  animation: tokumAnim 1.5s ease-out forwards;
+  z-index: 50; white-space: nowrap;
+}
+@keyframes tokumAnim {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  50%  { opacity: 1; transform: translateY(-20px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-50px) scale(0.8); }
+}
+
+/* ── OVERLAYS ── */
+.overlay {
+  position: fixed; inset: 0; width: 100%;
+  height: 100vh; height: 100dvh;
+  display: none; flex-direction: column;
+  z-index: 99; overflow: hidden; background: #000;
+}
+.overlay.active { display: flex; }
+
+/* Ana ekran */
+#ov { align-items: stretch; }
+#bgImage {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  z-index: 0; pointer-events: none; display: block;
+}
+#loadingSpinner {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); z-index: 1;
+}
+.spinner {
+  width: 44px; height: 44px;
+  border: 4px solid rgba(0,212,255,0.3);
+  border-top-color: #00d4ff; border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.main-btn-area {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 10px calc(var(--safe-bottom) + 12px); gap: 6px;
+  background: linear-gradient(to top,rgba(0,0,0,0.85) 50%,transparent 100%);
+}
+#startBtn {
+  width: 220px; height: 48px; border: none; border-radius: 24px;
+  background: linear-gradient(135deg,#00f5ff,#0095ff,#0066ff);
+  color: #fff; font-size: 11px; letter-spacing: 2px; cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,149,255,0.7);
+  text-shadow: 0 0 8px rgba(255,255,255,0.8);
+  animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+}
+#startBtn:active { transform: scale(0.95); }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 18px rgba(0,149,255,0.6); }
+  50%      { box-shadow: 0 0 32px rgba(0,200,255,0.9); }
+}
+.btn {
+  width: 155px; height: 38px; border: 2px solid;
+  border-radius: 19px; background: transparent;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  cursor: pointer; flex-shrink: 0; transition: transform 0.1s;
+}
+.btn:active { transform: scale(0.95); }
+.btn-blue  { color: #00d4ff; border-color: #00d4ff; text-shadow: 0 0 8px rgba(0,212,255,0.8);  box-shadow: 0 0 10px rgba(0,212,255,0.3); }
+.btn-red   { color: #ff0055; border-color: #ff0055; text-shadow: 0 0 8px rgba(255,0,85,0.8);   box-shadow: 0 0 10px rgba(255,0,85,0.3); }
+.btn-green { color: #00ff88; border-color: #00ff88; text-shadow: 0 0 8px rgba(0,255,136,0.8);  box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+
+/* ── ODA EKRANI ── */
+#room-ov {
+  background: rgba(10,10,30,0.98);
+  align-items: center; justify-content: center;
+  padding: calc(var(--safe-top) + 16px) 20px calc(var(--safe-bottom) + 16px);
+  gap: 14px;
+}
+.room-title { color: #f5a623; font-size: 13px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; text-align: center; }
+.room-sub { color: rgba(255,255,255,0.5); font-size: 7px; text-align: center; line-height: 2.2; letter-spacing: 0.5px; }
+.room-input {
+  width: 200px; height: 44px; background: #16213e;
+  border: 2px solid #00d4ff; border-radius: 12px;
+  color: #fff; font-family: 'Press Start 2P', cursive;
+  font-size: 14px; text-align: center; letter-spacing: 4px;
+  outline: none; text-transform: uppercase;
+}
+.room-input::placeholder { color: rgba(255,255,255,0.3); font-size: 9px; letter-spacing: 1px; }
+.room-divider { color: rgba(255,255,255,0.2); font-size: 7px; letter-spacing: 2px; }
+#room-status { color: #00d4ff; font-size: 7px; text-align: center; min-height: 20px; letter-spacing: 0.5px; line-height: 2; }
+.room-btn-row { display: flex; gap: 10px; }
+
+/* ── BEKLEME EKRANI ── */
+#wait-ov {
+  background: rgba(10,10,30,0.98);
+  align-items: center; justify-content: center;
+  padding: 20px; gap: 18px;
+}
+.wait-title { color: #f5a623; font-size: 12px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; text-align: center; }
+.wait-code {
+  background: #16213e; border: 2px solid #f5a623;
+  border-radius: 16px; padding: 12px 24px; text-align: center;
+}
+.wait-code-lbl { color: rgba(255,255,255,0.5); font-size: 7px; letter-spacing: 1px; margin-bottom: 6px; }
+.wait-code-val { color: #f5a623; font-size: 22px; letter-spacing: 8px; }
+.wait-sub { color: rgba(255,255,255,0.5); font-size: 7px; text-align: center; line-height: 2.5; letter-spacing: 0.5px; }
+.wait-dots { color: #00d4ff; font-size: 20px; letter-spacing: 6px; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── POPUP ── */
+.popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; backdrop-filter: blur(4px);
+}
+.popup-overlay.active { display: flex; }
+.popup-box {
+  background: linear-gradient(145deg,#16213e,#0f3460);
+  border: 2px solid #f5a623; border-radius: 20px;
+  padding: 24px 20px 20px; width: min(320px,88vw);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  box-shadow: 0 0 40px rgba(245,166,35,0.4), 0 20px 60px rgba(0,0,0,0.6);
+  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.popup-emoji { font-size: 42px; line-height: 1; filter: drop-shadow(0 0 10px rgba(245,166,35,0.8)); animation: bounce 0.6s ease infinite alternate; }
+@keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-6px)} }
+.popup-title { color: #f5a623; font-size: 14px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; }
+.popup-info { display: flex; gap: 12px; }
+.popup-stat {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 10px; padding: 8px 12px; text-align: center; min-width: 70px;
+}
+.popup-stat-val { color: #f5a623; font-size: 14px; display: block; margin-bottom: 3px; }
+.popup-stat-lbl { color: rgba(255,255,255,0.6); font-size: 4px; letter-spacing: 0.5px; }
+.popup-stars { font-size: 20px; letter-spacing: 4px; filter: drop-shadow(0 0 6px gold); }
+.popup-btn-row { display: flex; gap: 10px; width: 100%; margin-top: 4px; }
+.popup-btn {
+  flex: 1; height: 44px; border: 2px solid; border-radius: 22px;
+  background: transparent; font-size: 8px; font-weight: 700;
+  letter-spacing: 1px; cursor: pointer; transition: transform 0.1s;
+}
+.popup-btn:active { transform: scale(0.95); }
+.popup-btn.continue { background: linear-gradient(135deg,#00d4ff,#0080ff); border-color: #00d4ff; color: #fff; box-shadow: 0 0 16px rgba(0,212,255,0.5); }
+.popup-btn.menu-btn { color: #f5a623; border-color: #f5a623; }
+
+/* ── GAME OVER ── */
+.gameover-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  display: none; align-items: center; justify-content: center;
+  z-index: 300; backdrop-filter: blur(6px);
+}
+.gameover-overlay.active { display: flex; }
+.gameover-box {
+  background: linear-gradient(145deg,#1a0010,#3d0020);
+  border: 2px solid #ff0055; border-radius: 20px;
+  padding: 28px 24px 22px; width: min(300px,85vw);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  box-shadow: 0 0 50px rgba(255,0,85,0.5);
+  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.gameover-emoji { font-size: 48px; line-height: 1; animation: shake 0.5s ease infinite alternate; }
+@keyframes shake { from{transform:rotate(-5deg)} to{transform:rotate(5deg)} }
+.gameover-title { color: #ff0055; font-size: 14px; text-shadow: 2px 2px 0 #800028; letter-spacing: 2px; }
+.gameover-txt { color: rgba(255,255,255,0.7); font-size: 7px; text-align: center; line-height: 2; letter-spacing: 0.5px; }
+.gameover-btn-row { display: flex; gap: 10px; width: 100%; }
+.gameover-btn { flex: 1; height: 44px; border: 2px solid; border-radius: 22px; background: transparent; font-size: 7px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: transform 0.1s; }
+.gameover-btn:active { transform: scale(0.95); }
+.gameover-btn.retry { background: linear-gradient(135deg,#ff0055,#cc0040); border-color: #ff0055; color: #fff; box-shadow: 0 0 16px rgba(255,0,85,0.5); }
+.gameover-btn.menu  { color: #00d4ff; border-color: #00d4ff; }
+
+/* ── WIN / LOSE EKRANI (multiplayer) ── */
+#result-ov {
+  background: rgba(10,10,30,0.98);
+  align-items: center; justify-content: center;
+  gap: 18px; padding: 20px;
+}
+.result-emoji { font-size: 56px; line-height: 1; animation: bounce 0.6s ease infinite alternate; }
+.result-title { font-size: 16px; text-align: center; letter-spacing: 2px; }
+.result-title.win  { color: #f5a623; text-shadow: 2px 2px 0 #7a5010; }
+.result-title.lose { color: #ff0055; text-shadow: 2px 2px 0 #800028; }
+.result-sub { color: rgba(255,255,255,0.6); font-size: 7px; text-align: center; line-height: 2.5; letter-spacing: 0.5px; white-space: pre-line; }
+.result-btn-row { display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div class="top">
+  <div class="hud-left">
+    <div class="hud-lv">🦔 <span id="myApples">0</span>/5</div>
+    <div class="hud-sc">⭐ <span id="sc">0</span></div>
+  </div>
+  <div class="hud-center">
+    <div class="hud-title" id="hudTitle">KİRPY</div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+  </div>
+  <div class="hud-right">
+    <div class="hud-p2sc">👾 <span id="p2Apples">–</span></div>
+    <div class="hud-apples" id="appleHud">
+      <span class="apple-icon" id="a0">🍎</span>
+      <span class="apple-icon" id="a1">🍎</span>
+      <span class="apple-icon" id="a2">🍎</span>
+      <span class="apple-icon" id="a3">🍎</span>
+      <span class="apple-icon" id="a4">🍎</span>
+    </div>
+  </div>
+</div>
+
+<!-- OYUN ALANI -->
+<div class="mid" id="midArea">
+  <canvas id="c"></canvas>
+  <div class="swipe-hint">↑ ↓ ← → KAYDIRARAK HAREKET ET</div>
+</div>
+
+<!-- WIN POPUP (tek oyuncu) -->
+<div class="popup-overlay" id="winPopup">
+  <div class="popup-box">
+    <div class="popup-emoji">🎉</div>
+    <div class="popup-title">AFERİN!</div>
+    <div class="popup-stars" id="popupStars">⭐⭐⭐</div>
+    <div class="popup-info">
+      <div class="popup-stat">
+        <span class="popup-stat-val" id="popupSc">0</span>
+        <span class="popup-stat-lbl">PUAN</span>
+      </div>
+      <div class="popup-stat">
+        <span class="popup-stat-val" id="popupTime">0</span>
+        <span class="popup-stat-lbl">KALAN SÜRE</span>
+      </div>
+    </div>
+    <div class="popup-btn-row">
+      <button class="popup-btn menu-btn" id="popupMenu">🏠 MENÜ</button>
+      <button class="popup-btn continue" id="popupContinue">🔄 TEKRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME OVER POPUP -->
+<div class="gameover-overlay" id="gameoverPopup">
+  <div class="gameover-box">
+    <div class="gameover-emoji">💀</div>
+    <div class="gameover-title">SÜRE BİTTİ!</div>
+    <div class="gameover-txt">PUAN: <span id="goSc">0</span></div>
+    <div class="gameover-btn-row">
+      <button class="gameover-btn menu" id="goMenu">🏠 MENÜ</button>
+      <button class="gameover-btn retry" id="goRetry">🔄 TEKRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANA EKRAN -->
+<div id="ov" class="overlay active">
+  <img src="image.png" id="bgImage" alt="">
+  <div id="loadingSpinner"><div class="spinner"></div></div>
+  <div class="main-btn-area">
+    <button id="startBtn">▶ TEK OYUNCU ◀</button>
+    <button id="mpBtn" class="btn btn-green">👥 MULTİPLAYER</button>
+    <button id="rb" class="btn btn-red">🔄 SIFIRLA</button>
+  </div>
+</div>
+
+<!-- ODA EKRANI -->
+<div id="room-ov" class="overlay">
+  <div class="room-title">👥 MULTİPLAYER</div>
+  <div class="room-sub">Yeni oda oluştur veya<br>arkadaşının oda kodunu gir</div>
+  <button id="createRoomBtn" class="btn btn-green" style="width:200px">➕ ODA OLUŞTUR</button>
+  <div class="room-divider">— VEYA —</div>
+  <input type="text" class="room-input" id="roomCodeInput" maxlength="4" placeholder="KOD GİR">
+  <button id="joinRoomBtn" class="btn btn-blue" style="width:200px">🔗 ODA'YA GİR</button>
+  <div id="room-status"></div>
+  <button id="roomBackBtn" class="btn btn-red" style="width:140px">⬅ GERİ</button>
+</div>
+
+<!-- BEKLEME EKRANI -->
+<div id="wait-ov" class="overlay">
+  <div class="wait-title">ODA BEKLENİYOR</div>
+  <div class="wait-code">
+    <div class="wait-code-lbl">ODA KODU</div>
+    <div class="wait-code-val" id="waitCode">----</div>
+  </div>
+  <div class="wait-sub">Bu kodu arkadaşına gönder<br>ve bekleme ekranında kal</div>
+  <div class="wait-dots">• • •</div>
+  <button id="waitCancelBtn" class="btn btn-red" style="width:160px">❌ İPTAL</button>
+</div>
+
+<!-- SONUÇ EKRANI (multiplayer) -->
+<div id="result-ov" class="overlay">
+  <div class="result-emoji" id="resultEmoji">🏆</div>
+  <div class="result-title" id="resultTitle">KAZANDIN!</div>
+  <div class="result-sub" id="resultSub"></div>
+  <div class="result-btn-row">
+    <button class="btn btn-green" id="resultPlayAgain">🔄 TEKRAR</button>
+    <button class="btn btn-blue" id="resultMenu">🏠 MENÜ</button>
+  </div>
+</div>
+
+<!-- Firebase CDN (compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+/* ══════════════════════════════════════
+   FIREBASE INIT
+══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAmLYvQpX9oEa0IcHqSt_5Ncbcrq_ACUxM",
+  authDomain: "kirpy-85502.firebaseapp.com",
+  databaseURL: "https://kirpy-85502-default-rtdb.firebaseio.com",
+  projectId: "kirpy-85502",
+  storageBucket: "kirpy-85502.firebasestorage.app",
+  messagingSenderId: "723618299294",
+  appId: "1:723618299294:web:427876a76bd8d4b42e2a8f"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+/* ══════════════════════════════════════
+   CONSTANTS & STATE
+══════════════════════════════════════ */
+var C=11, R=17, SZ=34;
+var WALL=1, FLOOR=0, APPLE=2, EXIT=3, TP=4;
+var PAL=[
+  {bg:'#e8f5e9',w:'#388e3c',wt:'#66bb6a',f:'#c8e6c9'},
+  {bg:'#e3f2fd',w:'#1565c0',wt:'#42a5f5',f:'#bbdefb'},
+  {bg:'#fff3e0',w:'#e65100',wt:'#ff8f00',f:'#ffe0b2'},
+  {bg:'#fce4ec',w:'#880e4f',wt:'#e91e63',f:'#f8bbd0'},
+  {bg:'#f3e5f5',w:'#4a148c',wt:'#7b1fa2',f:'#e1bee7'},
+  {bg:'#e0f2f1',w:'#00695c',wt:'#26a69a',f:'#b2dfdb'},
+  {bg:'#fff9c4',w:'#f57f17',wt:'#fbc02d',f:'#fff59d'},
+  {bg:'#efebe9',w:'#4e342e',wt:'#6d4c41',f:'#d7ccc8'},
+  {bg:'#e8eaf6',w:'#283593',wt:'#3949ab',f:'#c5cae9'},
+  {bg:'#fbe9e7',w:'#bf360c',wt:'#ff5722',f:'#ffccbc'}
+];
+var pal = PAL[0];
+
+/* Oyun state */
+var myId = null, opId = null, roomId = null;
+var isMultiplayer = false, gameActive = false, blocked = false;
+var grid = null;
+var px=1, py=1, opx=3, opy=1;
+var myApples=0, opApples=0, sc=0;
+var tpLeft=null, tpRight=null;
+var exitPos=null, opExitPos=null;
+var parts=[];
+var epAnim=0, animFrame=null;
+var timerMax=90, timerLeft=90, timerRunning=false, timerInterval=null;
+
+/* Firebase refs */
+var roomRef=null, myRef=null, opRef=null, gridRef=null;
+var fbListeners=[];
+
+/* ══════════════════════════════════════
+   IMAGE
+══════════════════════════════════════ */
+(function(){
+  var img=new Image();
+  img.onload=function(){
+    document.getElementById('bgImage').src='image.png';
+    document.getElementById('loadingSpinner').style.display='none';
+  };
+  img.onerror=function(){ document.getElementById('loadingSpinner').style.display='none'; };
+  img.src='image.png';
+})();
+
+document.addEventListener('touchmove',function(e){
+  if(!e.target.closest('.overlay,.popup-overlay,.gameover-overlay')) e.preventDefault();
+},{passive:false});
+document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});
+
+/* ══════════════════════════════════════
+   AUDIO
+══════════════════════════════════════ */
+var audioCtx=null;
+function initAudio(){
+  if(!audioCtx) try{ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+}
+function beep(freq,dur){
+  initAudio(); if(!audioCtx) return;
+  var o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.value=freq; g.gain.value=0.08;
+  o.start(); o.stop(audioCtx.currentTime+dur);
+}
+function vib(type){
+  if(navigator.vibrate){
+    if(type==='move')     navigator.vibrate(8);
+    else if(type==='apple')    navigator.vibrate(40);
+    else if(type==='tp')       navigator.vibrate([30,20,30]);
+    else if(type==='door')     navigator.vibrate([80,40,80]);
+    else if(type==='win')      navigator.vibrate([150,80,150]);
+    else if(type==='gameover') navigator.vibrate([300,100,300]);
+  }
+  if(type==='move')          beep(200,0.02);
+  else if(type==='apple')   { beep(600,0.05); setTimeout(function(){beep(800,0.08);},60); }
+  else if(type==='tp')      { beep(400,0.1);  setTimeout(function(){beep(700,0.1);},100); }
+  else if(type==='door')    { beep(800,0.12); setTimeout(function(){beep(1000,0.12);},130); }
+  else if(type==='win')     { beep(500,0.08); setTimeout(function(){beep(700,0.08);},90); setTimeout(function(){beep(900,0.15);},180); }
+  else if(type==='gameover'){ beep(300,0.2);  setTimeout(function(){beep(200,0.3);},200); }
+}
+
+/* ══════════════════════════════════════
+   RESIZE
+══════════════════════════════════════ */
+var cv=document.getElementById('c'), ctx=cv.getContext('2d');
+function rsz(){
+  var mid=document.getElementById('midArea');
+  SZ=Math.min(Math.floor(mid.clientWidth/C), Math.floor(mid.clientHeight/R));
+  if(SZ<16) SZ=16;
+  cv.width=SZ*C; cv.height=SZ*R;
+}
+
+/* ══════════════════════════════════════
+   MAZE GENERATION (seeded RNG)
+══════════════════════════════════════ */
+function makeRng(seed){
+  return function(){
+    seed|=0; seed=seed+0x6D2B79F5|0;
+    var t=Math.imul(seed^seed>>>15,1|seed);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  };
+}
+var rngFn=Math.random;
+
+function makeGrid(){
+  var g=[];
+  for(var y=0;y<R;y++){ g[y]=[]; for(var x=0;x<C;x++) g[y][x]=WALL; }
+  return g;
+}
+
+function carveMaze(g,fn){
+  var vis=[];
+  for(var y=0;y<R;y++){ vis[y]=[]; for(var x=0;x<C;x++) vis[y][x]=false; }
+  function cr(x,y){
+    vis[y][x]=true; g[y][x]=FLOOR;
+    var dirs=[[0,-2],[0,2],[-2,0],[2,0]];
+    for(var i=3;i>0;i--){
+      var j=Math.floor(fn()*(i+1));
+      var tmp=dirs[i]; dirs[i]=dirs[j]; dirs[j]=tmp;
+    }
+    for(var i=0;i<4;i++){
+      var nx=x+dirs[i][0], ny=y+dirs[i][1];
+      if(nx>=0&&nx<C&&ny>=0&&ny<R&&!vis[ny][nx]){
+        g[ny-dirs[i][1]/2][nx-dirs[i][0]/2]=FLOOR;
+        cr(nx,ny);
+      }
+    }
+  }
+  cr(1,1);
+}
+
+/* Apple sayısını parametre olarak al */
+function placeApples(g,fn,count){
+  var fl=[];
+  for(var y=0;y<R;y++)
+    for(var x=0;x<C;x++)
+      if(g[y][x]===FLOOR&&!(x===1&&y===1)&&!(x===3&&y===1))
+        fl.push([x,y]);
+  for(var i=fl.length-1;i>0;i--){
+    var j=Math.floor(fn()*(i+1));
+    var tmp=fl[i]; fl[i]=fl[j]; fl[j]=tmp;
+  }
+  for(var i=0;i<Math.min(count,fl.length);i++) g[fl[i][1]][fl[i][0]]=APPLE;
+}
+
+function placeTeleports(g,fn){
+  var lc=[],rc=[];
+  for(var y=1;y<R-1;y++){
+    if(g[y][1]===FLOOR) lc.push(y);
+    if(g[y][C-2]===FLOOR) rc.push(y);
+  }
+  var tl=null,tr=null;
+  if(lc.length){ var li=Math.floor(fn()*lc.length); tl={x:0,y:lc[li]}; g[lc[li]][0]=TP; }
+  if(rc.length){ var ri=Math.floor(fn()*rc.length); tr={x:C-1,y:rc[ri]}; g[rc[ri]][C-1]=TP; }
+  return {tl,tr};
+}
+
+function buildFromSeed(seed){
+  rngFn=makeRng(seed);
+  pal=PAL[Math.floor(rngFn()*PAL.length)];
+  grid=makeGrid();
+  carveMaze(grid,rngFn);
+  /* spawn noktaları her zaman geçilebilir */
+  grid[1][1]=FLOOR; grid[1][3]=FLOOR;
+  var appleCount=isMultiplayer?10:5;
+  placeApples(grid,rngFn,appleCount);
+  var tp=placeTeleports(grid,rngFn);
+  tpLeft=tp.tl; tpRight=tp.tr;
+}
+
+/* ══════════════════════════════════════
+   SERIALIZE / DESERIALIZE
+══════════════════════════════════════ */
+function serializeGrid(g){
+  var a=[];
+  for(var y=0;y<R;y++) for(var x=0;x<C;x++) a.push(g[y][x]);
+  return a;
+}
+function deserializeGrid(a){
+  var g=makeGrid();
+  for(var y=0;y<R;y++) for(var x=0;x<C;x++) g[y][x]=a[y*C+x];
+  return g;
+}
+
+/* ══════════════════════════════════════
+   UTILS
+══════════════════════════════════════ */
+function randomCode(){
+  var ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',code='';
+  for(var i=0;i<4;i++) code+=ch[Math.floor(Math.random()*ch.length)];
+  return code;
+}
+function setStatus(msg){ document.getElementById('room-status').textContent=msg; }
+
+/* Tüm overlay'leri kapat veya birini aç */
+var ALL_OVS=['ov','room-ov','wait-ov','result-ov'];
+function showOverlay(id){
+  ALL_OVS.forEach(function(oid){
+    document.getElementById(oid).classList.toggle('active', oid===id);
+  });
+}
+function hideAllOverlays(){
+  ALL_OVS.forEach(function(oid){ document.getElementById(oid).classList.remove('active'); });
+}
+
+/* ══════════════════════════════════════
+   FIREBASE LISTENER YÖNETİMİ
+══════════════════════════════════════ */
+function clearListeners(){
+  fbListeners.forEach(function(l){ l.ref.off(l.ev,l.fn); });
+  fbListeners=[];
+}
+function addListener(ref,ev,fn){
+  ref.on(ev,fn);
+  fbListeners.push({ref,ev,fn});
+}
+
+/* ══════════════════════════════════════
+   ODA OLUŞTUR (p1)
+══════════════════════════════════════ */
+document.getElementById('createRoomBtn').onclick=function(){
+  initAudio();
+  var code=randomCode();
+  roomId=code;
+  myId='p1'; opId='p2';
+  roomRef=db.ref('rooms/'+roomId);
+  setStatus('🔧 Oda oluşturuluyor...');
+
+  roomRef.set({
+    status:'waiting',
+    seed:null,
+    grid:null,
+    winner:null,
+    timerLeft:120,
+    p1:{x:1,y:1,apples:0,score:0,hasExit:false,exitX:-1,exitY:-1,online:true},
+    p2:{x:3,y:1,apples:0,score:0,hasExit:false,exitX:-1,exitY:-1,online:false}
+  }).then(function(){
+    document.getElementById('waitCode').textContent=code;
+    showOverlay('wait-ov');
+    /* p2'nin bağlanmasını bekle */
+    var fn=function(snap){
+      if(snap.val()===true){
+        clearListeners();
+        startMultiplayerAsP1();
+      }
+    };
+    addListener(db.ref('rooms/'+roomId+'/p2/online'),'value',fn);
+  }).catch(function(err){
+    setStatus('❌ Hata: '+err.message);
+  });
+};
+
+/* ══════════════════════════════════════
+   ODA'YA GİR (p2)
+══════════════════════════════════════ */
+document.getElementById('joinRoomBtn').onclick=function(){
+  initAudio();
+  var code=document.getElementById('roomCodeInput').value.trim().toUpperCase();
+  if(code.length!==4){ setStatus('❌ 4 haneli kod gir'); return; }
+  setStatus('🔍 Oda aranıyor...');
+
+  db.ref('rooms/'+code).once('value').then(function(snap){
+    var val=snap.val();
+    if(!val)                        { setStatus('❌ Oda bulunamadı'); return; }
+    if(val.status!=='waiting')      { setStatus('❌ Oda dolu veya oyun başladı'); return; }
+    if(val.p2&&val.p2.online===true){ setStatus('❌ Oda dolu'); return; }
+
+    roomId=code;
+    myId='p2'; opId='p1';
+    roomRef=db.ref('rooms/'+roomId);
+    myRef=db.ref('rooms/'+roomId+'/p2');
+    opRef=db.ref('rooms/'+roomId+'/p1');
+
+    /* p2 olarak işaretle */
+    myRef.update({x:3,y:1,apples:0,score:0,hasExit:false,exitX:-1,exitY:-1,online:true})
+    .then(function(){
+      setStatus('✅ Bağlandı! Oyun başlıyor...');
+      /* seed gelince haritayı al ve başla */
+      var fn=function(snap){
+        var seed=snap.val();
+        if(seed!==null){
+          clearListeners();
+          startMultiplayerAsP2(seed);
+        }
+      };
+      addListener(db.ref('rooms/'+roomId+'/seed'),'value',fn);
+    }).catch(function(err){
+      setStatus('❌ Hata: '+err.message);
+    });
+  }).catch(function(err){
+    setStatus('❌ Bağlantı hatası: '+err.message);
+  });
+};
+
+/* ══════════════════════════════════════
+   MULTİPLAYER BAŞLAT — P1
+══════════════════════════════════════ */
+function startMultiplayerAsP1(){
+  isMultiplayer=true; gameActive=true;
+  myRef=db.ref('rooms/'+roomId+'/p1');
+  opRef=db.ref('rooms/'+roomId+'/p2');
+  gridRef=db.ref('rooms/'+roomId+'/grid');
+  initMultiplayerState();
+
+  var seed=Math.floor(Math.random()*9999999)+1;
+  buildFromSeed(seed);
+
+  // Teleport koordinatlarını hazırla
+  var tpData={
+    tpLeft:  tpLeft  ? {x:tpLeft.x,  y:tpLeft.y}  : null,
+    tpRight: tpRight ? {x:tpRight.x, y:tpRight.y} : null
+  };
+
+  db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid))
+  .then(function(){
+    return db.ref('rooms/'+roomId+'/seed').set(seed);
+  })
+  .then(function(){
+    // Teleportları Firebase'e yaz
+    return db.ref('rooms/'+roomId+'/teleports').set(tpData);
+  })
+  .then(function(){
+    return db.ref('rooms/'+roomId+'/status').set('playing');
+  })
+  .then(function(){
+    hideAllOverlays();
+    rsz();
+    pushMyPos();
+    listenOpponent();
+    startTimer();
+    if(!animFrame) loop();
+  });
+}
+/* ══════════════════════════════════════
+   MULTİPLAYER BAŞLAT — P2
+══════════════════════════════════════ */
+function startMultiplayerAsP2(seed){
+  isMultiplayer=true; gameActive=true;
+  myRef=db.ref('rooms/'+roomId+'/p2');
+  opRef=db.ref('rooms/'+roomId+'/p1');
+  gridRef=db.ref('rooms/'+roomId+'/grid');
+  initMultiplayerState();
+
+  // Grid ve teleportları paralel oku
+  Promise.all([
+    db.ref('rooms/'+roomId+'/grid').once('value'),
+    db.ref('rooms/'+roomId+'/teleports').once('value'),
+    db.ref('rooms/'+roomId+'/seed').once('value')
+  ]).then(function(results){
+    var gridSnap = results[0];
+    var tpSnap   = results[1];
+    var seedSnap = results[2];
+
+    // Grid
+    var arr=gridSnap.val();
+    if(arr){ grid=deserializeGrid(arr); }
+    else   { buildFromSeed(seedSnap.val()||seed); }
+
+    // Teleportlar — Firebase'den al
+    var tpData=tpSnap.val();
+    if(tpData){
+      tpLeft  = tpData.tpLeft  || null;
+      tpRight = tpData.tpRight || null;
+    } else {
+      // Yedek: seed'den hesapla
+      reconstructTeleports(seedSnap.val()||seed);
+    }
+
+    // Palet için seed'den sadece pal hesapla
+    var fn=makeRng(seedSnap.val()||seed);
+    pal=PAL[Math.floor(fn()*PAL.length)];
+
+    hideAllOverlays();
+    rsz();
+    px=3; py=1;
+    pushMyPos();
+    listenOpponent();
+    startTimer();
+    if(!animFrame) loop();
+  });
+}
+function initMultiplayerState(){
+  px=1; py=1; opx=3; opy=1;
+  myApples=0; opApples=0; sc=0;
+  exitPos=null; opExitPos=null;
+  parts=[]; blocked=false;
+  updateMyHUD();
+  document.getElementById('sc').textContent=0;
+  document.getElementById('p2Apples').textContent=0;
+  document.getElementById('hudTitle').textContent='2P';
+  timerMax=120; timerLeft=120;
+  if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
+  clearInterval(timerInterval);
+}
+
+/* Seed'den yalnızca pal + teleport konumlarını yeniden hesapla */
+function reconstructTeleports(seed){
+  var fn=makeRng(seed);
+  pal=PAL[Math.floor(fn()*PAL.length)];
+  /* Maze + apple RNG tüket (deterministic) */
+  var tmp=makeGrid(); carveMaze(tmp,fn);
+  var fl=[];
+  for(var y=0;y<R;y++) for(var x=0;x<C;x++)
+    if(tmp[y][x]===FLOOR&&!(x===1&&y===1)&&!(x===3&&y===1)) fl.push([x,y]);
+  for(var i=fl.length-1;i>0;i--){ var j=Math.floor(fn()*(i+1)); var t=fl[i];fl[i]=fl[j];fl[j]=t; }
+  for(var i=0;i<10;i++) fn(); /* 10 elma yerleştirme RNG'sini tüket */
+  /* TP */
+  var lc=[],rc=[];
+  for(var y=1;y<R-1;y++){ if(tmp[y][1]===FLOOR)lc.push(y); if(tmp[y][C-2]===FLOOR)rc.push(y); }
+  tpLeft=null; tpRight=null;
+  if(lc.length){ var li=Math.floor(fn()*lc.length); tpLeft={x:0,y:lc[li]}; }
+  if(rc.length){ var ri=Math.floor(fn()*rc.length); tpRight={x:C-1,y:rc[ri]}; }
+}
+
+/* ══════════════════════════════════════
+   FIREBASE PUSH / LISTEN
+══════════════════════════════════════ */
+function pushMyPos(){
+  if(!myRef||!gameActive) return;
+  myRef.update({
+    x:px, y:py,
+    apples:myApples,
+    score:sc,
+    hasExit: exitPos!==null,
+    exitX: exitPos ? exitPos[0] : -1,
+    exitY: exitPos ? exitPos[1] : -1,
+    online:true
+  });
+}
+
+function listenOpponent(){
+  /* Rakip konum/bilgi */
+  var posFn=function(snap){
+    var v=snap.val(); if(!v) return;
+    opx=v.x!=null?v.x:opx;
+    opy=v.y!=null?v.y:opy;
+    opApples=v.apples||0;
+    if(v.hasExit&&v.exitX>=0) opExitPos=[v.exitX,v.exitY];
+    document.getElementById('p2Apples').textContent=opApples;
+  };
+  addListener(opRef,'value',posFn);
+
+  /* Grid değişiklikleri (rakip elma yedi) */
+  var gridFn=function(snap){
+    var arr=snap.val(); if(!arr||!grid) return;
+    for(var y=0;y<R;y++) for(var x=0;x<C;x++){
+      var nv=arr[y*C+x];
+      /* Sadece elmanın silinmesini al, kendi EXIT/TP'lerini koru */
+      if(grid[y][x]===APPLE&&nv===FLOOR) grid[y][x]=FLOOR;
+    }
+  };
+  addListener(gridRef,'value',gridFn);
+
+  /* Kazanan */
+  var winFn=function(snap){
+    var winner=snap.val();
+    if(winner&&gameActive){
+      gameActive=false; blocked=true;
+      stopTimer(); clearListeners();
+      setTimeout(function(){ showResult(winner===myId); },600);
+    }
+  };
+  addListener(db.ref('rooms/'+roomId+'/winner'),'value',winFn);
+
+  /* Timer sync (p2 p1'in timerını okur) */
+  if(myId==='p2'){
+    var tFn=function(snap){
+      var t=snap.val();
+      if(t!=null&&timerRunning){ timerLeft=t; updateTimerBar(); }
+    };
+    addListener(db.ref('rooms/'+roomId+'/timerLeft'),'value',tFn);
+  }
+}
+
+/* ══════════════════════════════════════
+   MOVE
+══════════════════════════════════════ */
+function move(dx,dy){
+  if(!grid||blocked||!gameActive) return;
+  var nx=px+dx, ny=py+dy;
+  if(nx<0||nx>=C||ny<0||ny>=R) return;
+  var cell=grid[ny][nx];
+  if(cell===WALL) return;
+
+  /* TELEPORT */
+  if(cell===TP){
+    vib('tp');
+    spawnParticles(px,py,'#00d4ff');
+    if(tpLeft&&nx===tpLeft.x&&ny===tpLeft.y&&tpRight){
+      px=tpRight.x; py=tpRight.y;
+    } else if(tpRight&&nx===tpRight.x&&ny===tpRight.y&&tpLeft){
+      px=tpLeft.x; py=tpLeft.y;
+    } else {
+      px=nx; py=ny;
+    }
+    spawnParticles(px,py,'#00d4ff');
+    if(isMultiplayer) pushMyPos();
+    return;
+  }
+
+  /* ÇIKIŞ KAPISI — sadece kendi kapısına girebilir */
+  if(cell===EXIT && exitPos && nx===exitPos[0] && ny===exitPos[1]){
+    blocked=true;
+    px=nx; py=ny;
+    stopTimer();
+    var bonus=Math.floor(timerLeft)*5;
+    sc+=200+bonus;
+    document.getElementById('sc').textContent=sc;
+    vib('win');
+    if(isMultiplayer){
+      pushMyPos();
+      db.ref('rooms/'+roomId+'/winner').set(myId);
+    } else {
+      /* TEK OYUNCU KAZANDI */
+      showWinPopupSingle();
+    }
+    return;
+  }
+
+  /* NORMAL HAREKET */
+  px=nx; py=ny;
+  vib('move');
+
+  /* ELMA */
+  if(cell===APPLE){
+    if(myApples>=5){
+      showTokum(nx,ny);
+      return;
+    }
+    grid[ny][nx]=FLOOR;
+    myApples++;
+    sc+=100;
+    vib('apple');
+    spawnParticles(nx,ny,'#f5a623');
+    updateMyHUD();
+    document.getElementById('sc').textContent=sc;
+
+    if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
+
+    /* 5 elma doldu → kapıyı aç */
+    if(myApples===5){
+      var ep=findExitSpot();
+      if(ep){
+        exitPos=ep;
+        grid[ep[1]][ep[0]]=EXIT;
+        vib('door');
+        spawnParticles(ep[0],ep[1],'#ffd700');
+        if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
+      }
+    }
+  }
+
+  if(isMultiplayer) pushMyPos();
+}
+
+/* ══════════════════════════════════════
+   EXIT SPOT
+══════════════════════════════════════ */
+function findExitSpot(){
+  var excl=[[1,1],[3,1],[px,py]];
+  if(tpLeft)    excl.push([tpLeft.x,tpLeft.y]);
+  if(tpRight)   excl.push([tpRight.x,tpRight.y]);
+  if(exitPos)   excl.push(exitPos);
+  if(opExitPos) excl.push(opExitPos);
+  var fl=[];
+  for(var y=0;y<R;y++)
+    for(var x=0;x<C;x++){
+      if(grid[y][x]!==FLOOR) continue;
+      var ok=true;
+      for(var k=0;k<excl.length;k++) if(excl[k][0]===x&&excl[k][1]===y){ok=false;break;}
+      if(ok) fl.push([x,y]);
+    }
+  if(!fl.length) return null;
+  return fl[Math.floor(Math.random()*fl.length)];
+}
+
+/* ══════════════════════════════════════
+   TOKUM FLOAT
+══════════════════════════════════════ */
+function showTokum(gx,gy){
+  var mid=document.getElementById('midArea');
+  var ox=(mid.clientWidth-cv.width)/2;
+  var oy=(mid.clientHeight-cv.height)/2;
+  var sx=ox+gx*SZ+SZ/2, sy=oy+gy*SZ;
+  var el=document.createElement('div');
+  el.className='tokum-float';
+  el.textContent='TOKUM!';
+  el.style.cssText='left:'+sx+'px;top:'+sy+'px;transform:translateX(-50%)';
+  mid.appendChild(el);
+  setTimeout(function(){ if(el.parentNode) el.remove(); },1500);
+}
+
+/* ══════════════════════════════════════
+   HUD
+══════════════════════════════════════ */
+function updateMyHUD(){
+  document.getElementById('myApples').textContent=myApples;
+  for(var i=0;i<5;i++){
+    document.getElementById('a'+i).classList.toggle('collected',i<myApples);
+  }
+}
+
+/* ══════════════════════════════════════
+   TIMER
+══════════════════════════════════════ */
+function startTimer(){
+  timerLeft=timerMax; timerRunning=true; updateTimerBar();
+  clearInterval(timerInterval);
+  timerInterval=setInterval(function(){
+    if(!timerRunning) return;
+    timerLeft=Math.max(0, timerLeft-0.1);
+    updateTimerBar();
+
+    /* p1, timer'ı Firebase'e yazar */
+    if(isMultiplayer&&myId==='p1')
+      db.ref('rooms/'+roomId+'/timerLeft').set(+(timerLeft.toFixed(1)));
+
+    if(timerLeft<=0){
+      clearInterval(timerInterval);
+      timerRunning=false;
+      if(!blocked){
+        blocked=true;
+        if(isMultiplayer){
+          /* winner yoksa skora göre belirle */
+          db.ref('rooms/'+roomId+'/winner').once('value').then(function(snap){
+            if(!snap.val()){
+              db.ref('rooms/'+roomId+'/'+myId+'/score').set(sc).then(function(){
+                setTimeout(resolveByScore, 400);
+              });
+            }
+          });
+        } else {
+          setTimeout(showGameoverSingle, 800);
+        }
+      }
+    }
+  },100);
+}
+
+function resolveByScore(){
+  db.ref('rooms/'+roomId).once('value').then(function(snap){
+    var v=snap.val(); if(!v||!gameActive) return;
+    var p1s=v.p1?v.p1.score:0, p2s=v.p2?v.p2.score:0;
+    db.ref('rooms/'+roomId+'/winner').set(p1s>=p2s?'p1':'p2');
+  });
+}
+
+function stopTimer(){ timerRunning=false; clearInterval(timerInterval); }
+
+function updateTimerBar(){
+  var pct=timerLeft/timerMax*100;
+  var bar=document.getElementById('timerBar');
+  bar.style.width=pct+'%';
+  bar.style.background=
+    pct>50 ? 'linear-gradient(90deg,#f5a623,#ff6b00)' :
+    pct>25 ? 'linear-gradient(90deg,#ff6b00,#ff3300)' :
+             'linear-gradient(90deg,#ff0000,#cc0000)';
+}
+
+/* ══════════════════════════════════════
+   SONUÇ EKRANLAR
+══════════════════════════════════════ */
+function showWinPopupSingle(){
+  /* Yıldız hesapla */
+  var pct=timerLeft/timerMax;
+  var stars=pct>0.6?'⭐⭐⭐':pct>0.3?'⭐⭐':'⭐';
+  document.getElementById('popupStars').textContent=stars;
+  document.getElementById('popupSc').textContent=sc;
+  document.getElementById('popupTime').textContent=Math.floor(timerLeft);
+  document.getElementById('winPopup').classList.add('active');
+  vib('win');
+}
+
+function showGameoverSingle(){
+  document.getElementById('goSc').textContent=sc;
+  document.getElementById('gameoverPopup').classList.add('active');
+  vib('gameover');
+}
+
+function showResult(iWon){
+  gameActive=false;
+  document.getElementById('resultEmoji').textContent=iWon?'🏆':'😢';
+  var titleEl=document.getElementById('resultTitle');
+  titleEl.textContent=iWon?'KAZANDIN!':'KAYBETTİN!';
+  titleEl.className='result-title '+(iWon?'win':'lose');
+  document.getElementById('resultSub').textContent=
+    'Puan: '+sc+'\nElma: '+myApples+'/5\n'+
+    (iWon?'Çıkıştan ilk çıkan sen oldun!':'Rakibin önce çıktı!');
+  showOverlay('result-ov');
+  vib(iWon?'win':'gameover');
+}
+
+/* ══════════════════════════════════════
+   TEK OYUNCU BAŞLAT
+══════════════════════════════════════ */
+function startSingle(){
+  /* State temizle */
+  clearListeners();
+  stopTimer();
+  if(animFrame){ cancelAnimationFrame(animFrame); animFrame=null; }
+  document.getElementById('winPopup').classList.remove('active');
+  document.getElementById('gameoverPopup').classList.remove('active');
+
+  isMultiplayer=false; gameActive=true;
+  myId='p1'; opId=null;
+  px=1; py=1; opx=-1; opy=-1;
+  myApples=0; opApples=0; sc=0;
+  exitPos=null; opExitPos=null;
+  parts=[]; blocked=false;
+  roomId=null; roomRef=null; myRef=null; opRef=null;
+
+  var seed=Math.floor(Math.random()*9999999)+1;
+  buildFromSeed(seed);
+
+  updateMyHUD();
+  document.getElementById('sc').textContent=0;
+  document.getElementById('p2Apples').textContent='–';
+  document.getElementById('hudTitle').textContent='KİRPY';
+
+  timerMax=90; timerLeft=90;
+  startTimer();
+  loop();
+}
+
+/* ══════════════════════════════════════
+   DRAW
+══════════════════════════════════════ */
+function drawCell(x,y,cell){
+  var px2=x*SZ, py2=y*SZ;
+  /* Zemin */
+  ctx.fillStyle = cell===WALL ? pal.w : pal.f;
+  ctx.fillRect(px2,py2,SZ,SZ);
+  if(cell===WALL){
+    ctx.fillStyle=pal.wt;
+    ctx.fillRect(px2+2,py2+2,SZ-4,Math.max(3,SZ*0.15));
+  }
+  /* Elma */
+  if(cell===APPLE){
+    var s=0.88+0.12*Math.sin(Date.now()/400+x+y);
+    ctx.save();
+    ctx.translate(px2+SZ/2,py2+SZ/2); ctx.scale(s,s);
+    ctx.fillStyle='#e53935';
+    ctx.beginPath(); ctx.arc(0,SZ*0.05,SZ*0.24,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#388e3c';
+    ctx.fillRect(-SZ*0.05,-SZ*0.26,SZ*0.1,SZ*0.18);
+    ctx.restore();
+  }
+  /* Kendi çıkış kapısı */
+  if(cell===EXIT && exitPos && x===exitPos[0] && y===exitPos[1]){
+    var p=0.55+0.4*Math.sin(epAnim*Math.PI*2);
+    ctx.fillStyle='rgba(255,214,0,'+p+')';
+    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+    ctx.font=(SZ*0.52)+'px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+  }
+  /* Rakip çıkış kapısı */
+  if(opExitPos && x===opExitPos[0] && y===opExitPos[1] &&
+     !(exitPos && x===exitPos[0] && y===exitPos[1])){
+    var p2=0.35+0.2*Math.sin(epAnim*Math.PI*2);
+    ctx.fillStyle='rgba(255,110,199,'+p2+')';
+    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+    ctx.font=(SZ*0.52)+'px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+  }
+  /* Teleport */
+  if(cell===TP){
+    var tp=0.7+0.3*Math.sin(Date.now()/300+x*y);
+    ctx.fillStyle='rgba(0,212,255,'+tp+')';
+    ctx.beginPath(); ctx.roundRect(px2+2,py2+2,SZ-4,SZ-4,6); ctx.fill();
+    ctx.font=(SZ*0.52)+'px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🌀',px2+SZ/2,py2+SZ/2);
+  }
+}
+
+function drawKirpi(kx,ky,isOp){
+  var cx=kx*SZ+SZ/2, cy=ky*SZ+SZ/2;
+  var s=SZ/38;
+  ctx.save(); ctx.translate(cx,cy); ctx.scale(s,s);
+  if(isOp){
+    /* Pembe kirpi */
+    ctx.fillStyle='#880e4f';
+    ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#4a0030'; ctx.lineWidth=2;
+    [[-5,-12],[5,-12],[-8,-9],[8,-9],[-11,-5],[11,-5],[0,-13]].forEach(function(d){
+      ctx.beginPath(); ctx.moveTo(d[0]*0.3,d[1]*0.3); ctx.lineTo(d[0],d[1]); ctx.stroke();
+    });
+    ctx.fillStyle='#f8bbd0'; ctx.beginPath(); ctx.ellipse(6,2,7,6,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(10,0,2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(11,-0.5,0.7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9c27b0'; ctx.beginPath(); ctx.arc(13,2,1.4,0,Math.PI*2); ctx.fill();
+  } else {
+    /* Kahverengi kirpi */
+    ctx.fillStyle='#795548';
+    ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#4e342e'; ctx.lineWidth=2;
+    [[-5,-12],[5,-12],[-8,-9],[8,-9],[-11,-5],[11,-5],[0,-13]].forEach(function(d){
+      ctx.beginPath(); ctx.moveTo(d[0]*0.3,d[1]*0.3); ctx.lineTo(d[0],d[1]); ctx.stroke();
+    });
+    ctx.fillStyle='#d7ccc8'; ctx.beginPath(); ctx.ellipse(6,2,7,6,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(10,0,2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(11,-0.5,0.7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e91e63'; ctx.beginPath(); ctx.arc(13,2,1.4,0,Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function spawnParticles(x,y,color){
+  var cx=x*SZ+SZ/2, cy=y*SZ+SZ/2;
+  for(var i=0;i<10;i++){
+    var a=Math.PI*2/10*i;
+    parts.push({x:cx,y:cy,vx:Math.cos(a)*2.5,vy:Math.sin(a)*2.5,l:1,c:color});
+  }
+}
+
+function loop(ts){
+  ts=ts||0; epAnim=(ts/2000)%1;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,cv.width,cv.height);
+  if(grid){
+    for(var y=0;y<R;y++) for(var x=0;x<C;x++) drawCell(x,y,grid[y][x]);
+  }
+  /* Partiküller */
+  for(var i=parts.length-1;i>=0;i--){
+    var p=parts[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.12; p.l-=0.035;
+    if(p.l<=0){ parts.splice(i,1); continue; }
+    ctx.globalAlpha=p.l;
+    ctx.fillStyle=p.c||'#f5a623';
+    ctx.beginPath(); ctx.arc(p.x,p.y,SZ*0.12,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  /* Kirpiler */
+  if(grid){
+    if(isMultiplayer&&opx>=0&&opy>=0) drawKirpi(opx,opy,true);
+    drawKirpi(px,py,false);
+  }
+  animFrame=requestAnimationFrame(loop);
+}
+
+/* ══════════════════════════════════════
+   INPUT
+══════════════════════════════════════ */
+document.addEventListener('keydown',function(e){
+  var m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],
+         w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};
+  if(m[e.key]){ e.preventDefault(); move(m[e.key][0],m[e.key][1]); }
+});
+
+var touchSX=0,touchSY=0;
+document.addEventListener('touchstart',function(e){
+  if(e.target.closest('.overlay,.popup-overlay,.gameover-overlay')) return;
+  touchSX=e.touches[0].clientX; touchSY=e.touches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend',function(e){
+  if(e.target.closest('.overlay,.popup-overlay,.gameover-overlay')) return;
+  var dx=e.changedTouches[0].clientX-touchSX;
+  var dy=e.changedTouches[0].clientY-touchSY;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<18) return;
+  if(Math.abs(dx)>Math.abs(dy)) move(dx>0?1:-1,0);
+  else move(0,dy>0?1:-1);
+},{passive:true});
+
+var msDown=false,msSX=0,msSY=0;
+document.addEventListener('mousedown',function(e){
+  if(e.target.closest('.overlay,.popup-overlay,.gameover-overlay')) return;
+  msDown=true; msSX=e.clientX; msSY=e.clientY;
+});
+document.addEventListener('mouseup',function(e){
+  if(!msDown) return; msDown=false;
+  if(e.target.closest('.overlay,.popup-overlay,.gameover-overlay')) return;
+  var dx=e.clientX-msSX, dy=e.clientY-msSY;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<10) return;
+  if(Math.abs(dx)>Math.abs(dy)) move(dx>0?1:-1,0);
+  else move(0,dy>0?1:-1);
+});
+document.addEventListener('mouseleave',function(){ msDown=false; });
+
+/* ══════════════════════════════════════
+   BUTONLAR
+══════════════════════════════════════ */
+document.getElementById('startBtn').onclick=function(){
+  initAudio();
+  hideAllOverlays();
+  rsz();
+  startSingle();
+};
+document.getElementById('mpBtn').onclick=function(){
+  initAudio();
+  document.getElementById('room-status').textContent='';
+  document.getElementById('roomCodeInput').value='';
+  showOverlay('room-ov');
+};
+document.getElementById('rb').onclick=function(){
+  if(confirm('Sıfırlamak istediğine emin misin?')){
+    localStorage.clear();
+    location.reload();
+  }
+};
+document.getElementById('roomBackBtn').onclick=function(){
+  showOverlay('ov');
+};
+document.getElementById('waitCancelBtn').onclick=function(){
+  clearListeners();
+  if(roomRef){ roomRef.remove(); roomRef=null; }
+  roomId=null; myId=null; opId=null;
+  showOverlay('room-ov');
+};
+
+/* Win popup butonları */
+document.getElementById('popupMenu').onclick=function(){
+  document.getElementById('winPopup').classList.remove('active');
+  showOverlay('ov');
+};
+document.getElementById('popupContinue').onclick=function(){
+  document.getElementById('winPopup').classList.remove('active');
+  rsz(); startSingle();
+};
+
+/* Gameover butonları */
+document.getElementById('goMenu').onclick=function(){
+  document.getElementById('gameoverPopup').classList.remove('active');
+  showOverlay('ov');
+};
+document.getElementById('goRetry').onclick=function(){
+  document.getElementById('gameoverPopup').classList.remove('active');
+  rsz(); startSingle();
+};
+
+/* Result (multiplayer) butonları */
+document.getElementById('resultPlayAgain').onclick=function(){
+  if(roomRef){ roomRef.remove(); }
+  roomId=null; roomRef=null; myRef=null; opRef=null; gridRef=null;
+  clearListeners();
+  showOverlay('room-ov');
+};
+document.getElementById('resultMenu').onclick=function(){
+  if(roomRef){ roomRef.remove(); }
+  roomId=null; roomRef=null; myRef=null; opRef=null; gridRef=null;
+  clearListeners();
+  showOverlay('ov');
+};
+
+/* ══════════════════════════════════════
+   MISC
+══════════════════════════════════════ */
+window.addEventListener('resize',function(){
+  if(!document.getElementById('ov').classList.contains('active')){
+    rsz();
+  }
+});
+window.addEventListener('beforeunload',function(){
+  if(roomRef&&myId) try{ db.ref('rooms/'+roomId+'/'+myId).update({online:false}); }catch(e){}
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./service-worker.js').catch(function(){});
+}
+
+rsz();
+</script>
+</body>
+</html>
