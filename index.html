@@ -1107,25 +1107,24 @@ function drawCell(x,y,cell){
     ctx.restore();
   }
 
-  /* P1 kapısı — her zaman SARI (p1ExitPos veya tek oyuncu exitPos) */
-  var myExit = isMultiplayer ? p1ExitPos : exitPos;
-  if(cell===EXIT && myExit && x===myExit[0] && y===myExit[1]){
-    var p=0.55+0.4*Math.sin(epAnim*Math.PI*2);
-    ctx.fillStyle='rgba(255,214,0,'+p+')';
-    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
-    ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
-  }
+  /* P1 kapısı — her zaman SARI */
+if(p1ExitPos && x===p1ExitPos[0] && y===p1ExitPos[1]){
+  var p=0.55+0.4*Math.sin(epAnim*Math.PI*2);
+  ctx.fillStyle='rgba(255,214,0,'+p+')';
+  ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+  ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+}
 
-  /* P2 kapısı — her zaman PEMBE */
-  if(isMultiplayer && p2ExitPos && x===p2ExitPos[0] && y===p2ExitPos[1]
-     && !(myExit && x===myExit[0] && y===myExit[1])){
-    var p2=0.35+0.2*Math.sin(epAnim*Math.PI*2);
-    ctx.fillStyle='rgba(255,110,199,'+p2+')';
-    ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
-    ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
-  }
+/* P2 kapısı — her zaman PEMBE */
+if(p2ExitPos && x===p2ExitPos[0] && y===p2ExitPos[1]
+   && !(p1ExitPos && x===p1ExitPos[0] && y===p1ExitPos[1])){
+  var p2=0.35+0.2*Math.sin(epAnim*Math.PI*2);
+  ctx.fillStyle='rgba(255,110,199,'+p2+')';
+  ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
+  ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
+}
 
   if(cell===TP){
     var tp=0.7+0.3*Math.sin(Date.now()/300+x*y);
