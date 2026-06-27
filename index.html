@@ -51,12 +51,17 @@ body {
   color: #f5a623; font-size: 10px; text-shadow: 1px 1px 0 #7a5010;
   letter-spacing: 1px; white-space: nowrap; text-align: center; width: 100%;
 }
+.timer-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 5px; width: 100%;
+}
 .timer-bar-wrap {
-  width: 100%; max-width: 120px; height: 8px;
+  width: 100%; max-width: 110px; height: 8px;
   background: #16213e; border-radius: 3px; border: 1px solid #f5a623;
-  overflow: hidden; margin: 0 auto;
+  overflow: hidden;
 }
 .timer-bar { height: 100%; background: linear-gradient(90deg,#f5a623,#ff6b00); border-radius: 3px; width: 100%; transition: background 0.5s; }
+.timer-sec { color: #f5a623; font-size: 8px; white-space: nowrap; min-width: 20px; text-align: right; }
 .hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; min-width: 70px; }
 .hud-apples { display: flex; align-items: center; gap: 2px; }
 .apple-icon { font-size: 12px; opacity: 0.3; transition: opacity 0.3s; filter: grayscale(100%); line-height: 1; }
@@ -116,7 +121,6 @@ canvas { display: block; touch-action: none; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Ayar butonu */
 #settingsBtn {
   position: absolute; top: calc(var(--safe-top) + 14px); left: 16px;
   z-index: 3; width: 36px; height: 36px;
@@ -128,7 +132,6 @@ canvas { display: block; touch-action: none; }
 #settingsBtn:active { transform: scale(0.9); }
 .settings-icon { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Ana buton alanı */
 .main-btn-area {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
   display: flex; flex-direction: column; align-items: center;
@@ -151,8 +154,7 @@ canvas { display: block; touch-action: none; }
   border-radius: inherit; pointer-events: none;
 }
 #singleBtn {
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: #fff;
+  background: linear-gradient(135deg, #00c6ff, #0072ff); color: #fff;
   box-shadow: 0 0 20px rgba(0,114,255,0.5), 0 4px 15px rgba(0,0,0,0.4);
   animation: btnPulse1 2.5s ease-in-out infinite;
 }
@@ -161,8 +163,7 @@ canvas { display: block; touch-action: none; }
   50%      { box-shadow: 0 0 30px rgba(0,198,255,0.8), 0 4px 15px rgba(0,0,0,0.4); }
 }
 #multiBtn {
-  background: linear-gradient(135deg, #00ff88, #00c853);
-  color: #003320;
+  background: linear-gradient(135deg, #00ff88, #00c853); color: #003320;
   box-shadow: 0 0 20px rgba(0,200,83,0.5), 0 4px 15px rgba(0,0,0,0.4);
   animation: btnPulse2 2.5s ease-in-out infinite 0.4s;
 }
@@ -179,8 +180,7 @@ canvas { display: block; touch-action: none; }
 .mp-sub-btns.open { max-height: 100px; opacity: 1; }
 .sub-btn {
   width: 100%; height: 32px; border-radius: 16px;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 6px; letter-spacing: 1px;
+  font-family: 'Press Start 2P', cursive; font-size: 6px; letter-spacing: 1px;
   cursor: pointer; outline: none; transition: transform 0.1s;
   position: relative; overflow: hidden;
 }
@@ -190,14 +190,11 @@ canvas { display: block; touch-action: none; }
   background: linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, transparent 60%);
   border-radius: inherit; pointer-events: none;
 }
-#quickBtn { background: linear-gradient(135deg, #f5a623, #e67e00); color: #fff; border: none; box-shadow: 0 0 14px rgba(245,166,35,0.45); }
+#quickBtn { background: linear-gradient(135deg,#f5a623,#e67e00); color: #fff; border: none; box-shadow: 0 0 14px rgba(245,166,35,0.45); }
 #roomBtn  { background: transparent; color: #00d4ff; border: 1.5px solid #00d4ff; box-shadow: 0 0 10px rgba(0,212,255,0.2); }
 
-/* ── AYAR MENÜSÜ ── */
-#settings-ov {
-  background: rgba(10,10,30,0.98);
-  align-items: center; justify-content: center; gap: 24px; padding: 40px 24px;
-}
+/* ── AYAR ── */
+#settings-ov { background: rgba(10,10,30,0.98); align-items: center; justify-content: center; gap: 24px; padding: 40px 24px; }
 .settings-title { color: #f5a623; font-size: 13px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; }
 .settings-row { display: flex; align-items: center; justify-content: space-between; width: 240px; gap: 16px; }
 .settings-lbl { color: #fff; font-size: 8px; letter-spacing: 1px; }
@@ -208,21 +205,11 @@ canvas { display: block; touch-action: none; }
 .settings-back { width: 140px; height: 38px; border-radius: 19px; background: transparent; border: 1.5px solid #ff0055; color: #ff0055; font-family: 'Press Start 2P', cursive; font-size: 8px; letter-spacing: 1px; cursor: pointer; transition: transform 0.1s; }
 .settings-back:active { transform: scale(0.95); }
 
-/* ── ODA EKRANI ── */
-#room-ov {
-  background: rgba(10,10,30,0.98);
-  align-items: center; justify-content: center;
-  padding: calc(var(--safe-top) + 16px) 20px calc(var(--safe-bottom) + 16px); gap: 14px;
-}
+/* ── ODA ── */
+#room-ov { background: rgba(10,10,30,0.98); align-items: center; justify-content: center; padding: calc(var(--safe-top)+16px) 20px calc(var(--safe-bottom)+16px); gap: 14px; }
 .room-title { color: #f5a623; font-size: 13px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; text-align: center; }
 .room-sub { color: rgba(255,255,255,0.5); font-size: 7px; text-align: center; line-height: 2.2; letter-spacing: 0.5px; }
-.room-input {
-  width: 200px; height: 44px; background: #16213e;
-  border: 2px solid #00d4ff; border-radius: 12px;
-  color: #fff; font-family: 'Press Start 2P', cursive;
-  font-size: 14px; text-align: center; letter-spacing: 4px;
-  outline: none; text-transform: uppercase;
-}
+.room-input { width: 200px; height: 44px; background: #16213e; border: 2px solid #00d4ff; border-radius: 12px; color: #fff; font-family: 'Press Start 2P', cursive; font-size: 14px; text-align: center; letter-spacing: 4px; outline: none; text-transform: uppercase; }
 .room-input::placeholder { color: rgba(255,255,255,0.3); font-size: 9px; letter-spacing: 1px; }
 .room-divider { color: rgba(255,255,255,0.2); font-size: 7px; letter-spacing: 2px; }
 #room-status { color: #00d4ff; font-size: 7px; text-align: center; min-height: 20px; letter-spacing: 0.5px; line-height: 2; }
@@ -232,7 +219,7 @@ canvas { display: block; touch-action: none; }
 .ov-btn-blue  { width: 200px; background: transparent; color: #00d4ff; border: 1.5px solid #00d4ff; }
 .ov-btn-red   { width: 140px; background: transparent; color: #ff0055; border: 1.5px solid #ff0055; }
 
-/* ── BEKLEME EKRANI ── */
+/* ── BEKLEME ── */
 #wait-ov { background: rgba(10,10,30,0.98); align-items: center; justify-content: center; padding: 20px; gap: 18px; }
 .wait-title { color: #f5a623; font-size: 12px; text-shadow: 2px 2px 0 #7a5010; letter-spacing: 2px; text-align: center; }
 .wait-code { background: #16213e; border: 2px solid #f5a623; border-radius: 16px; padding: 12px 24px; text-align: center; }
@@ -245,13 +232,7 @@ canvas { display: block; touch-action: none; }
 /* ── POPUP ── */
 .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200; backdrop-filter: blur(4px); }
 .popup-overlay.active { display: flex; }
-.popup-box {
-  background: linear-gradient(145deg,#16213e,#0f3460); border: 2px solid #f5a623; border-radius: 20px;
-  padding: 24px 20px 20px; width: min(320px,88vw);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  box-shadow: 0 0 40px rgba(245,166,35,0.4), 0 20px 60px rgba(0,0,0,0.6);
-  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-}
+.popup-box { background: linear-gradient(145deg,#16213e,#0f3460); border: 2px solid #f5a623; border-radius: 20px; padding: 24px 20px 20px; width: min(320px,88vw); display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 0 40px rgba(245,166,35,0.4),0 20px 60px rgba(0,0,0,0.6); animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
 @keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
 .popup-emoji { font-size: 42px; line-height: 1; filter: drop-shadow(0 0 10px rgba(245,166,35,0.8)); animation: bounce 0.6s ease infinite alternate; }
 @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-6px)} }
@@ -270,13 +251,7 @@ canvas { display: block; touch-action: none; }
 /* ── GAME OVER ── */
 .gameover-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 300; backdrop-filter: blur(6px); }
 .gameover-overlay.active { display: flex; }
-.gameover-box {
-  background: linear-gradient(145deg,#1a0010,#3d0020); border: 2px solid #ff0055; border-radius: 20px;
-  padding: 28px 24px 22px; width: min(300px,85vw);
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  box-shadow: 0 0 50px rgba(255,0,85,0.5);
-  animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-}
+.gameover-box { background: linear-gradient(145deg,#1a0010,#3d0020); border: 2px solid #ff0055; border-radius: 20px; padding: 28px 24px 22px; width: min(300px,85vw); display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 0 50px rgba(255,0,85,0.5); animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
 .gameover-emoji { font-size: 48px; line-height: 1; animation: shake 0.5s ease infinite alternate; }
 @keyframes shake { from{transform:rotate(-5deg)} to{transform:rotate(5deg)} }
 .gameover-title { color: #ff0055; font-size: 14px; text-shadow: 2px 2px 0 #800028; letter-spacing: 2px; }
@@ -287,7 +262,7 @@ canvas { display: block; touch-action: none; }
 .gameover-btn.retry { background: linear-gradient(135deg,#ff0055,#cc0040); border-color: #ff0055; color: #fff; box-shadow: 0 0 16px rgba(255,0,85,0.5); }
 .gameover-btn.menu  { color: #00d4ff; border-color: #00d4ff; }
 
-/* ── SONUÇ (multiplayer) ── */
+/* ── SONUÇ ── */
 #result-ov { background: rgba(10,10,30,0.98); align-items: center; justify-content: center; gap: 18px; padding: 20px; }
 .result-emoji { font-size: 56px; line-height: 1; animation: bounce 0.6s ease infinite alternate; }
 .result-title { font-size: 16px; text-align: center; letter-spacing: 2px; }
@@ -307,7 +282,10 @@ canvas { display: block; touch-action: none; }
   </div>
   <div class="hud-center">
     <div class="hud-title" id="hudTitle">KİRPY</div>
-    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+    <div class="timer-row">
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+      <span class="timer-sec" id="timerSec">60</span>
+    </div>
   </div>
   <div class="hud-right">
     <div class="hud-p2sc">👾 <span id="p2Apples">–</span></div>
@@ -383,7 +361,7 @@ canvas { display: block; touch-action: none; }
   </div>
 </div>
 
-<!-- AYAR MENÜSÜ -->
+<!-- AYAR -->
 <div id="settings-ov" class="overlay">
   <div class="settings-title">AYARLAR</div>
   <div class="settings-row">
@@ -393,7 +371,7 @@ canvas { display: block; touch-action: none; }
   <button class="settings-back" id="settingsBackBtn">GERI</button>
 </div>
 
-<!-- ODA EKRANI -->
+<!-- ODA -->
 <div id="room-ov" class="overlay">
   <div class="room-title">MULTIPLAYER</div>
   <div class="room-sub">Yeni oda olustur veya<br>arkadasinin oda kodunu gir</div>
@@ -405,7 +383,7 @@ canvas { display: block; touch-action: none; }
   <button class="ov-btn ov-btn-red" id="roomBackBtn">GERI</button>
 </div>
 
-<!-- BEKLEME EKRANI -->
+<!-- BEKLEME -->
 <div id="wait-ov" class="overlay">
   <div class="wait-title" id="waitTitle">ODA BEKLENIYOR</div>
   <div class="wait-code">
@@ -417,7 +395,7 @@ canvas { display: block; touch-action: none; }
   <button class="ov-btn ov-btn-red" id="waitCancelBtn">IPTAL</button>
 </div>
 
-<!-- SONUÇ EKRANI -->
+<!-- SONUÇ -->
 <div id="result-ov" class="overlay">
   <div class="result-emoji" id="resultEmoji">🏆</div>
   <div class="result-title" id="resultTitle">KAZANDIN!</div>
@@ -430,7 +408,6 @@ canvas { display: block; touch-action: none; }
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAmLYvQpX9oEa0IcHqSt_5Ncbcrq_ACUxM",
@@ -447,8 +424,7 @@ var db = firebase.database();
 /* ── SABITLER ── */
 var C=11, R=17, SZ=34;
 var WALL=1, FLOOR=0, APPLE=2, EXIT=3, TP=4;
-
-/* P1 spawn: sol üst (1,1)  P2 spawn: sağ üst (9,1) */
+/* P1: sol üst (1,1)   P2: sağ üst (9,1) */
 var P1_SX=1, P1_SY=1;
 var P2_SX=9, P2_SY=1;
 
@@ -466,14 +442,21 @@ var PAL=[
 ];
 var pal=PAL[0];
 
-/* ── STATE ── */
 var myId=null, opId=null, roomId=null;
 var isMultiplayer=false, gameActive=false, blocked=false;
 var grid=null;
 var px=P1_SX, py=P1_SY, opx=P2_SX, opy=P2_SY;
 var myApples=0, opApples=0, sc=0;
 var tpLeft=null, tpRight=null, tpTop=null, tpBottom=null;
+
+/*
+  exitPos  = benim kapım (her zaman sarı)
+  opExitPos= rakibin kapısı (her zaman pembe)
+  Her iki pozisyon da Firebase'de saklanır → her iki ekranda aynı görünür
+*/
 var exitPos=null, opExitPos=null;
+var p1ExitPos=null, p2ExitPos=null; /* Firebase'den gelen mutlak referanslar */
+
 var parts=[];
 var epAnim=0, animFrame=null;
 var timerMax=60, timerLeft=60, timerRunning=false, timerInterval=null;
@@ -576,42 +559,32 @@ function carveMaze(g,fn){
 function placeApples(g,fn,count){
   var fl=[];
   for(var y=0;y<R;y++) for(var x=0;x<C;x++)
-    if(g[y][x]===FLOOR
-      &&!(x===P1_SX&&y===P1_SY)
-      &&!(x===P2_SX&&y===P2_SY)) fl.push([x,y]);
+    if(g[y][x]===FLOOR&&!(x===P1_SX&&y===P1_SY)&&!(x===P2_SX&&y===P2_SY))
+      fl.push([x,y]);
   for(var i=fl.length-1;i>0;i--){ var j=Math.floor(fn()*(i+1)); var tmp=fl[i]; fl[i]=fl[j]; fl[j]=tmp; }
   for(var i=0;i<Math.min(count,fl.length);i++) g[fl[i][1]][fl[i][0]]=APPLE;
 }
 
-/*
-  Sol/Sağ teleport: kenar sütunlarda (x=0, x=C-1)
-    - Sol:  x=0,  y=lc[li]  → bitişiği g[y][1] FLOOR olmalı
-    - Sağ:  x=C-1,y=rc[ri]  → bitişiği g[y][C-2] FLOOR olmalı
-
-  Üst/Alt teleport: kenar satırlarda (y=0, y=R-1)
-    - Üst:  y=0,  x=tc[ti]  → bitişiği g[1][x] FLOOR olmalı
-    - Alt:  y=R-1,x=bc[bi]  → bitişiği g[R-2][x] FLOOR olmalı
-*/
 function placeTeleports(g,fn){
-  /* Sol */
+  /* Sol: x=0, bitişik g[y][1] FLOOR olmalı */
   var lc=[];
   for(var y=1;y<R-1;y++) if(g[y][1]===FLOOR) lc.push(y);
   var tl=null;
   if(lc.length){ var li=Math.floor(fn()*lc.length); tl={x:0,y:lc[li]}; g[lc[li]][0]=TP; }
 
-  /* Sağ */
+  /* Sağ: x=C-1, bitişik g[y][C-2] FLOOR olmalı */
   var rc=[];
   for(var y=1;y<R-1;y++) if(g[y][C-2]===FLOOR) rc.push(y);
   var tr=null;
   if(rc.length){ var ri=Math.floor(fn()*rc.length); tr={x:C-1,y:rc[ri]}; g[rc[ri]][C-1]=TP; }
 
-  /* Üst */
+  /* Üst: y=0, bitişik g[1][x] FLOOR olmalı */
   var tc=[];
   for(var x=1;x<C-1;x++) if(g[1][x]===FLOOR) tc.push(x);
   var tt=null;
   if(tc.length){ var ti=Math.floor(fn()*tc.length); tt={x:tc[ti],y:0}; g[0][tc[ti]]=TP; }
 
-  /* Alt */
+  /* Alt: y=R-1, bitişik g[R-2][x] FLOOR olmalı */
   var bc=[];
   for(var x=1;x<C-1;x++) if(g[R-2][x]===FLOOR) bc.push(x);
   var tb=null;
@@ -625,7 +598,6 @@ function buildFromSeed(seed){
   pal=PAL[Math.floor(rngFn()*PAL.length)];
   grid=makeGrid();
   carveMaze(grid,rngFn);
-  /* spawn noktaları her zaman geçilebilir */
   grid[P1_SY][P1_SX]=FLOOR;
   grid[P2_SY][P2_SX]=FLOOR;
   placeApples(grid,rngFn,isMultiplayer?10:5);
@@ -650,18 +622,14 @@ function addListener(ref,ev,fn){ ref.on(ev,fn); fbListeners.push({ref:ref,ev:ev,
 /* ── MULTIPLAYER ALT MENU ── */
 var mpOpen=false;
 document.getElementById('multiBtn').onclick=function(){
-  initAudio();
-  mpOpen=!mpOpen;
+  initAudio(); mpOpen=!mpOpen;
   document.getElementById('mpSubBtns').classList.toggle('open',mpOpen);
 };
 
-/* ── AYAR MENÜSÜ ── */
+/* ── AYAR ── */
 document.getElementById('settingsBtn').onclick=function(){ showOverlay('settings-ov'); };
 document.getElementById('settingsBackBtn').onclick=function(){ showOverlay('ov'); };
-document.getElementById('soundToggle').onclick=function(){
-  soundOn=!soundOn;
-  this.classList.toggle('on',soundOn);
-};
+document.getElementById('soundToggle').onclick=function(){ soundOn=!soundOn; this.classList.toggle('on',soundOn); };
 
 /* ── HIZLI EŞLEŞTİRME ── */
 document.getElementById('quickBtn').onclick=function(){
@@ -693,10 +661,7 @@ function startQuickMatch(){
         showOverlay('wait-ov');
         myRef.update({x:P2_SX,y:P2_SY,apples:0,score:0,hasExit:false,exitX:-1,exitY:-1,online:true})
         .then(function(){
-          var fn=function(snap){
-            var seed=snap.val();
-            if(seed!==null){ clearListeners(); startMultiplayerAsP2(seed); }
-          };
+          var fn=function(snap){ var seed=snap.val(); if(seed!==null){ clearListeners(); startMultiplayerAsP2(seed); } };
           addListener(db.ref('rooms/'+roomId+'/seed'),'value',fn);
         });
       });
@@ -718,18 +683,14 @@ function startQuickMatch(){
         document.getElementById('waitSub').textContent='Rakip bekleniyor...\nOda kodu ile de girebilir';
         showOverlay('wait-ov');
         var fn=function(snap){
-          if(snap.val()===true){
-            clearListeners(); clearTimeout(quickTimeout);
-            if(quickRef){ quickRef.remove(); quickRef=null; }
-            startMultiplayerAsP1();
-          }
+          if(snap.val()===true){ clearListeners(); clearTimeout(quickTimeout); if(quickRef){quickRef.remove();quickRef=null;} startMultiplayerAsP1(); }
         };
         addListener(db.ref('rooms/'+roomId+'/p2/online'),'value',fn);
         quickTimeout=setTimeout(function(){
           clearListeners();
-          if(quickRef){ quickRef.remove(); quickRef=null; }
-          if(roomRef){ roomRef.remove(); roomRef=null; }
-          roomId=null; myId=null; opId=null; isQuickMatch=false;
+          if(quickRef){quickRef.remove();quickRef=null;}
+          if(roomRef){roomRef.remove();roomRef=null;}
+          roomId=null;myId=null;opId=null;isQuickMatch=false;
           showOverlay('ov');
         },60000);
       });
@@ -763,9 +724,7 @@ document.getElementById('createRoomBtn').onclick=function(){
     document.getElementById('waitCode').textContent=code;
     document.getElementById('waitSub').textContent='Bu kodu arkadasina gonder\nve bekleme ekraninda kal';
     showOverlay('wait-ov');
-    var fn=function(snap){
-      if(snap.val()===true){ clearListeners(); startMultiplayerAsP1(); }
-    };
+    var fn=function(snap){ if(snap.val()===true){ clearListeners(); startMultiplayerAsP1(); } };
     addListener(db.ref('rooms/'+roomId+'/p2/online'),'value',fn);
   }).catch(function(err){ setStatus('Hata: '+err.message); });
 };
@@ -787,10 +746,7 @@ document.getElementById('joinRoomBtn').onclick=function(){
     myRef.update({x:P2_SX,y:P2_SY,apples:0,score:0,hasExit:false,exitX:-1,exitY:-1,online:true})
     .then(function(){
       setStatus('Baglandi! Oyun basliyor...');
-      var fn=function(snap){
-        var seed=snap.val();
-        if(seed!==null){ clearListeners(); startMultiplayerAsP2(seed); }
-      };
+      var fn=function(snap){ var seed=snap.val(); if(seed!==null){ clearListeners(); startMultiplayerAsP2(seed); } };
       addListener(db.ref('rooms/'+roomId+'/seed'),'value',fn);
     }).catch(function(err){ setStatus('Hata: '+err.message); });
   }).catch(function(err){ setStatus('Baglanti hatasi: '+err.message); });
@@ -806,10 +762,10 @@ function startMultiplayerAsP1(){
   var seed=Math.floor(Math.random()*9999999)+1;
   buildFromSeed(seed);
   var tpData={
-    tpLeft:   tpLeft   ? {x:tpLeft.x,   y:tpLeft.y}   : null,
-    tpRight:  tpRight  ? {x:tpRight.x,  y:tpRight.y}  : null,
-    tpTop:    tpTop    ? {x:tpTop.x,    y:tpTop.y}    : null,
-    tpBottom: tpBottom ? {x:tpBottom.x, y:tpBottom.y} : null
+    tpLeft:   tpLeft   ?{x:tpLeft.x,  y:tpLeft.y}  :null,
+    tpRight:  tpRight  ?{x:tpRight.x, y:tpRight.y} :null,
+    tpTop:    tpTop    ?{x:tpTop.x,   y:tpTop.y}   :null,
+    tpBottom: tpBottom ?{x:tpBottom.x,y:tpBottom.y}:null
   };
   db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid))
   .then(function(){ return db.ref('rooms/'+roomId+'/seed').set(seed); })
@@ -840,13 +796,11 @@ function startMultiplayerAsP2(seed){
     else   { buildFromSeed(seed); }
     var tpData=results[1].val();
     if(tpData){
-      tpLeft   = tpData.tpLeft   || null;
-      tpRight  = tpData.tpRight  || null;
-      tpTop    = tpData.tpTop    || null;
-      tpBottom = tpData.tpBottom || null;
-    } else {
-      reconstructTeleports(seed);
-    }
+      tpLeft   =tpData.tpLeft   ||null;
+      tpRight  =tpData.tpRight  ||null;
+      tpTop    =tpData.tpTop    ||null;
+      tpBottom =tpData.tpBottom ||null;
+    } else { reconstructTeleports(seed); }
     var fn=makeRng(results[2].val()||seed);
     pal=PAL[Math.floor(fn()*PAL.length)];
     hideAllOverlays(); rsz();
@@ -861,6 +815,7 @@ function initMultiplayerState(){
   px=P1_SX; py=P1_SY; opx=P2_SX; opy=P2_SY;
   myApples=0; opApples=0; sc=0;
   exitPos=null; opExitPos=null;
+  p1ExitPos=null; p2ExitPos=null;
   parts=[]; blocked=false;
   updateMyHUD();
   document.getElementById('sc').textContent=0;
@@ -875,49 +830,50 @@ function reconstructTeleports(seed){
   var fn=makeRng(seed);
   pal=PAL[Math.floor(fn()*PAL.length)];
   var tmp=makeGrid(); carveMaze(tmp,fn);
-  /* Apple RNG tüket */
   var fl=[];
   for(var y=0;y<R;y++) for(var x=0;x<C;x++)
     if(tmp[y][x]===FLOOR&&!(x===P1_SX&&y===P1_SY)&&!(x===P2_SX&&y===P2_SY)) fl.push([x,y]);
   for(var i=fl.length-1;i>0;i--){ var j=Math.floor(fn()*(i+1)); var t=fl[i];fl[i]=fl[j];fl[j]=t; }
   for(var i=0;i<10;i++) fn();
-  /* Sol */
-  var lc=[];
-  for(var y=1;y<R-1;y++) if(tmp[y][1]===FLOOR) lc.push(y);
-  tpLeft=null;
-  if(lc.length){ var li=Math.floor(fn()*lc.length); tpLeft={x:0,y:lc[li]}; }
-  /* Sağ */
-  var rc=[];
-  for(var y=1;y<R-1;y++) if(tmp[y][C-2]===FLOOR) rc.push(y);
-  tpRight=null;
-  if(rc.length){ var ri=Math.floor(fn()*rc.length); tpRight={x:C-1,y:rc[ri]}; }
-  /* Üst */
-  var tc=[];
-  for(var x=1;x<C-1;x++) if(tmp[1][x]===FLOOR) tc.push(x);
-  tpTop=null;
-  if(tc.length){ var ti=Math.floor(fn()*tc.length); tpTop={x:tc[ti],y:0}; }
-  /* Alt */
-  var bc=[];
-  for(var x=1;x<C-1;x++) if(tmp[R-2][x]===FLOOR) bc.push(x);
-  tpBottom=null;
-  if(bc.length){ var bi=Math.floor(fn()*bc.length); tpBottom={x:bc[bi],y:R-1}; }
+  var lc=[]; for(var y=1;y<R-1;y++) if(tmp[y][1]===FLOOR) lc.push(y);
+  tpLeft=null; if(lc.length){ var li=Math.floor(fn()*lc.length); tpLeft={x:0,y:lc[li]}; }
+  var rc=[]; for(var y=1;y<R-1;y++) if(tmp[y][C-2]===FLOOR) rc.push(y);
+  tpRight=null; if(rc.length){ var ri=Math.floor(fn()*rc.length); tpRight={x:C-1,y:rc[ri]}; }
+  var tc=[]; for(var x=1;x<C-1;x++) if(tmp[1][x]===FLOOR) tc.push(x);
+  tpTop=null; if(tc.length){ var ti=Math.floor(fn()*tc.length); tpTop={x:tc[ti],y:0}; }
+  var bc=[]; for(var x=1;x<C-1;x++) if(tmp[R-2][x]===FLOOR) bc.push(x);
+  tpBottom=null; if(bc.length){ var bi=Math.floor(fn()*bc.length); tpBottom={x:bc[bi],y:R-1}; }
 }
 
 /* ── FIREBASE PUSH / LISTEN ── */
 function pushMyPos(){
   if(!myRef||!gameActive) return;
-  myRef.update({x:px,y:py,apples:myApples,score:sc,hasExit:exitPos!==null,exitX:exitPos?exitPos[0]:-1,exitY:exitPos?exitPos[1]:-1,online:true});
+  myRef.update({
+    x:px,y:py,apples:myApples,score:sc,
+    hasExit:exitPos!==null,
+    exitX:exitPos?exitPos[0]:-1,
+    exitY:exitPos?exitPos[1]:-1,
+    online:true
+  });
 }
 
 function listenOpponent(){
   var posFn=function(snap){
     var v=snap.val(); if(!v) return;
-    opx=v.x!=null?v.x:opx; opy=v.y!=null?v.y:opy;
+    opx=v.x!=null?v.x:opx;
+    opy=v.y!=null?v.y:opy;
     opApples=v.apples||0;
-    if(v.hasExit&&v.exitX>=0) opExitPos=[v.exitX,v.exitY];
+    /* Rakibin kapısını kaydet */
+    if(v.hasExit&&v.exitX>=0){
+      opExitPos=[v.exitX,v.exitY];
+      /* Mutlak referanslar: p1/p2 kim olduğuna bakmaksızın */
+      if(opId==='p1') p1ExitPos=opExitPos;
+      else            p2ExitPos=opExitPos;
+    }
     document.getElementById('p2Apples').textContent=opApples;
   };
   addListener(opRef,'value',posFn);
+
   var gridFn=function(snap){
     var arr=snap.val(); if(!arr||!grid) return;
     for(var y=0;y<R;y++) for(var x=0;x<C;x++){
@@ -925,6 +881,7 @@ function listenOpponent(){
     }
   };
   addListener(gridRef,'value',gridFn);
+
   var winFn=function(snap){
     var winner=snap.val();
     if(winner&&gameActive){
@@ -934,6 +891,7 @@ function listenOpponent(){
     }
   };
   addListener(db.ref('rooms/'+roomId+'/winner'),'value',winFn);
+
   if(myId==='p2'){
     var tFn=function(snap){
       var t=snap.val();
@@ -951,19 +909,13 @@ function move(dx,dy){
   var cell=grid[ny][nx];
   if(cell===WALL) return;
 
-  /* TELEPORT */
+  /* TELEPORT — tüm 4 yön */
   if(cell===TP){
     vib('tp');
     spawnParticles(px,py,'#00d4ff');
-    /* Sol → Sağ */
-    if(tpLeft&&nx===tpLeft.x&&ny===tpLeft.y&&tpRight){       px=tpRight.x;  py=tpRight.y; }
-    /* Sağ → Sol */
-    else if(tpRight&&nx===tpRight.x&&ny===tpRight.y&&tpLeft){ px=tpLeft.x;   py=tpLeft.y; }
-    /* Üst → Alt */
-    else if(tpTop&&nx===tpTop.x&&ny===tpTop.y&&tpBottom){     px=tpBottom.x; py=tpBottom.y; }
-    /* Alt → Üst */
-    else if(tpBottom&&nx===tpBottom.x&&ny===tpBottom.y&&tpTop){ px=tpTop.x;  py=tpTop.y; }
-    else { px=nx; py=ny; }
+    var tp=getTeleportDest(nx,ny);
+    if(tp){ px=tp.x; py=tp.y; }
+    else   { px=nx;  py=ny;  }
     spawnParticles(px,py,'#00d4ff');
     if(isMultiplayer) pushMyPos();
     return;
@@ -981,11 +933,10 @@ function move(dx,dy){
     return;
   }
 
-  /* NORMAL HAREKET */
+  /* NORMAL */
   px=nx; py=ny;
   vib('move');
 
-  /* ELMA */
   if(cell===APPLE){
     if(myApples>=5){ showTokum(nx,ny); return; }
     grid[ny][nx]=FLOOR; myApples++; sc+=100;
@@ -995,13 +946,25 @@ function move(dx,dy){
     if(myApples===5){
       var ep=findExitSpot();
       if(ep){
-        exitPos=ep; grid[ep[1]][ep[0]]=EXIT;
+        exitPos=ep;
+        /* Mutlak referans */
+        if(myId==='p1') p1ExitPos=ep; else p2ExitPos=ep;
+        grid[ep[1]][ep[0]]=EXIT;
         vib('door'); spawnParticles(ep[0],ep[1],'#ffd700');
         if(isMultiplayer) db.ref('rooms/'+roomId+'/grid').set(serializeGrid(grid));
       }
     }
   }
   if(isMultiplayer) pushMyPos();
+}
+
+/* Teleport hedefini döndür */
+function getTeleportDest(nx,ny){
+  if(tpLeft   &&nx===tpLeft.x   &&ny===tpLeft.y   &&tpRight)  return {x:tpRight.x,  y:tpRight.y};
+  if(tpRight  &&nx===tpRight.x  &&ny===tpRight.y  &&tpLeft)   return {x:tpLeft.x,   y:tpLeft.y};
+  if(tpTop    &&nx===tpTop.x    &&ny===tpTop.y    &&tpBottom) return {x:tpBottom.x, y:tpBottom.y};
+  if(tpBottom &&nx===tpBottom.x &&ny===tpBottom.y &&tpTop)    return {x:tpTop.x,    y:tpTop.y};
+  return null;
 }
 
 function findExitSpot(){
@@ -1077,6 +1040,7 @@ function updateTimerBar(){
   var bar=document.getElementById('timerBar');
   bar.style.width=pct+'%';
   bar.style.background=pct>50?'linear-gradient(90deg,#f5a623,#ff6b00)':pct>25?'linear-gradient(90deg,#ff6b00,#ff3300)':'linear-gradient(90deg,#ff0000,#cc0000)';
+  document.getElementById('timerSec').textContent=Math.ceil(timerLeft);
 }
 
 /* ── SONUÇLAR ── */
@@ -1116,7 +1080,7 @@ function startSingle(){
   myId='p1'; opId=null;
   px=P1_SX; py=P1_SY; opx=-1; opy=-1;
   myApples=0; opApples=0; sc=0;
-  exitPos=null; opExitPos=null;
+  exitPos=null; opExitPos=null; p1ExitPos=null; p2ExitPos=null;
   parts=[]; blocked=false;
   roomId=null; roomRef=null; myRef=null; opRef=null;
   buildFromSeed(Math.floor(Math.random()*9999999)+1);
@@ -1134,6 +1098,7 @@ function drawCell(x,y,cell){
   ctx.fillStyle=cell===WALL?pal.w:pal.f;
   ctx.fillRect(px2,py2,SZ,SZ);
   if(cell===WALL){ ctx.fillStyle=pal.wt; ctx.fillRect(px2+2,py2+2,SZ-4,Math.max(3,SZ*0.15)); }
+
   if(cell===APPLE){
     var s=0.88+0.12*Math.sin(Date.now()/400+x+y);
     ctx.save(); ctx.translate(px2+SZ/2,py2+SZ/2); ctx.scale(s,s);
@@ -1141,20 +1106,27 @@ function drawCell(x,y,cell){
     ctx.fillStyle='#388e3c'; ctx.fillRect(-SZ*0.05,-SZ*0.26,SZ*0.1,SZ*0.18);
     ctx.restore();
   }
-  if(cell===EXIT&&exitPos&&x===exitPos[0]&&y===exitPos[1]){
+
+  /* P1 kapısı — her zaman SARI (p1ExitPos veya tek oyuncu exitPos) */
+  var myExit = isMultiplayer ? p1ExitPos : exitPos;
+  if(cell===EXIT && myExit && x===myExit[0] && y===myExit[1]){
     var p=0.55+0.4*Math.sin(epAnim*Math.PI*2);
     ctx.fillStyle='rgba(255,214,0,'+p+')';
     ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
     ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
   }
-  if(opExitPos&&x===opExitPos[0]&&y===opExitPos[1]&&!(exitPos&&x===exitPos[0]&&y===exitPos[1])){
+
+  /* P2 kapısı — her zaman PEMBE */
+  if(isMultiplayer && p2ExitPos && x===p2ExitPos[0] && y===p2ExitPos[1]
+     && !(myExit && x===myExit[0] && y===myExit[1])){
     var p2=0.35+0.2*Math.sin(epAnim*Math.PI*2);
     ctx.fillStyle='rgba(255,110,199,'+p2+')';
     ctx.beginPath(); ctx.roundRect(px2+3,py2+3,SZ-6,SZ-6,5); ctx.fill();
     ctx.font=(SZ*0.52)+'px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText('🚪',px2+SZ/2,py2+SZ/2+1);
   }
+
   if(cell===TP){
     var tp=0.7+0.3*Math.sin(Date.now()/300+x*y);
     ctx.fillStyle='rgba(0,212,255,'+tp+')';
@@ -1168,7 +1140,6 @@ function drawKirpi(kx,ky,isP2){
   var cx=kx*SZ+SZ/2, cy=ky*SZ+SZ/2, s=SZ/38;
   ctx.save(); ctx.translate(cx,cy); ctx.scale(s,s);
   if(isP2){
-    /* Pembe kirpi — P2 */
     ctx.fillStyle='#880e4f'; ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#4a0030'; ctx.lineWidth=2;
     [[-5,-12],[5,-12],[-8,-9],[8,-9],[-11,-5],[11,-5],[0,-13]].forEach(function(d){ ctx.beginPath(); ctx.moveTo(d[0]*0.3,d[1]*0.3); ctx.lineTo(d[0],d[1]); ctx.stroke(); });
@@ -1177,7 +1148,6 @@ function drawKirpi(kx,ky,isP2){
     ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(11,-0.5,0.7,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#9c27b0'; ctx.beginPath(); ctx.arc(13,2,1.4,0,Math.PI*2); ctx.fill();
   } else {
-    /* Kahverengi kirpi — P1 */
     ctx.fillStyle='#795548'; ctx.beginPath(); ctx.ellipse(0,2,13,9,0,0,Math.PI*2); ctx.fill();
     ctx.strokeStyle='#4e342e'; ctx.lineWidth=2;
     [[-5,-12],[5,-12],[-8,-9],[8,-9],[-11,-5],[11,-5],[0,-13]].forEach(function(d){ ctx.beginPath(); ctx.moveTo(d[0]*0.3,d[1]*0.3); ctx.lineTo(d[0],d[1]); ctx.stroke(); });
@@ -1206,11 +1176,16 @@ function loop(ts){
   }
   if(grid){
     if(isMultiplayer&&opx>=0&&opy>=0){
-      /* P1 her zaman kahverengi, P2 her zaman pembe */
-      drawKirpi(opx,opy, myId==='p1'); /* rakip: ben p1 isem rakip p2=pembe */
-      drawKirpi(px,py,   myId==='p2'); /* ben:   ben p2 isem ben pembe */
+      /* P1 kahverengi, P2 pembe — hangi telefonda bakılırsa bakılsın */
+      if(myId==='p1'){
+        drawKirpi(opx,opy,true);  /* rakip = P2 = pembe */
+        drawKirpi(px,py,false);   /* ben   = P1 = kahverengi */
+      } else {
+        drawKirpi(opx,opy,false); /* rakip = P1 = kahverengi */
+        drawKirpi(px,py,true);    /* ben   = P2 = pembe */
+      }
     } else {
-      drawKirpi(px,py,false); /* tek oyuncu: kahverengi */
+      drawKirpi(px,py,false);
     }
   }
   animFrame=requestAnimationFrame(loop);
@@ -1245,9 +1220,9 @@ document.getElementById('singleBtn').onclick=function(){ initAudio(); hideAllOve
 
 document.getElementById('waitCancelBtn').onclick=function(){
   clearListeners(); clearTimeout(quickTimeout);
-  if(quickRef){ quickRef.remove(); quickRef=null; }
-  if(roomRef){ roomRef.remove(); roomRef=null; }
-  roomId=null; myId=null; opId=null; isQuickMatch=false;
+  if(quickRef){quickRef.remove();quickRef=null;}
+  if(roomRef){roomRef.remove();roomRef=null;}
+  roomId=null;myId=null;opId=null;isQuickMatch=false;
   document.getElementById('waitTitle').textContent='ODA BEKLENIYOR';
   document.getElementById('waitCodeLbl').textContent='ODA KODU';
   document.getElementById('waitSub').textContent='Bu kodu arkadasina gonder\nve bekleme ekraninda kal';
@@ -1261,22 +1236,22 @@ document.getElementById('goMenu').onclick=function(){ document.getElementById('g
 document.getElementById('goRetry').onclick=function(){ document.getElementById('gameoverPopup').classList.remove('active'); rsz(); startSingle(); };
 
 document.getElementById('resultPlayAgain').onclick=function(){
-  if(roomRef){ roomRef.remove(); }
-  roomId=null; roomRef=null; myRef=null; opRef=null; gridRef=null;
+  if(roomRef){roomRef.remove();}
+  roomId=null;roomRef=null;myRef=null;opRef=null;gridRef=null;
   clearListeners();
   if(isQuickMatch){ showOverlay('ov'); setTimeout(startQuickMatch,300); }
   else showOverlay('room-ov');
 };
 document.getElementById('resultMenu').onclick=function(){
-  if(roomRef){ roomRef.remove(); }
-  roomId=null; roomRef=null; myRef=null; opRef=null; gridRef=null;
-  clearListeners(); isQuickMatch=false; showOverlay('ov');
+  if(roomRef){roomRef.remove();}
+  roomId=null;roomRef=null;myRef=null;opRef=null;gridRef=null;
+  clearListeners();isQuickMatch=false;showOverlay('ov');
 };
 
 window.addEventListener('resize',function(){ if(!document.getElementById('ov').classList.contains('active')) rsz(); });
 window.addEventListener('beforeunload',function(){
-  if(quickRef) try{ quickRef.remove(); }catch(e){}
-  if(roomRef&&myId) try{ db.ref('rooms/'+roomId+'/'+myId).update({online:false}); }catch(e){}
+  if(quickRef) try{quickRef.remove();}catch(e){}
+  if(roomRef&&myId) try{db.ref('rooms/'+roomId+'/'+myId).update({online:false});}catch(e){}
 });
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./service-worker.js').catch(function(){}); }
