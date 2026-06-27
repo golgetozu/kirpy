@@ -613,10 +613,6 @@ function showOverlay(id){
 function hideAllOverlays(){
   ALL_OVS.forEach(function(oid){ document.getElementById(oid).classList.remove('active'); });
 }
-// HUD title'a debug bilgisi bas
-document.getElementById('hudTitle').textContent = 
-  'tp:'+(tpLeft?tpLeft.x+','+tpLeft.y:'null')+
-  '|'+(tpRight?tpRight.x+','+tpRight.y:'null');
 /* ══════════════════════════════════════
    FIREBASE LISTENER YÖNETİMİ
 ══════════════════════════════════════ */
@@ -787,6 +783,7 @@ function startMultiplayerAsP2(seed){
     hideAllOverlays();
     rsz();
     px=3; py=1;
+    document.getElementById('hudTitle').textContent = '2P';
     pushMyPos();
     listenOpponent();
     startTimer();
